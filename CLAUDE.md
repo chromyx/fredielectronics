@@ -2,6 +2,10 @@
 
 Rebuild of fredielectronics.com as a bilingual portfolio site for investors and clients: Albanian at `/` (default), English at `/en`. The client is Fredi Electronics sh.p.k., Tirana (LED screens, audio, conference, security & access, energy & UPS, electrical/electronic accessories). Ecler is their exclusive audio partner.
 
+## What is and isn't in this repository
+
+Everything is here: code, all photos, `drive/`, `backup/`, and the full content in `site/content-db/fredi.db` (identical to the live database as of 2026-11-17 evening, minus logins). Missing on purpose: `.env` (make a new one), `ADMIN-LOGIN.txt` (create a new admin on first visit), the live `site/data/fredi.db` (only adds the login; there were 0 contact messages), and one 386 MB video the site does not use.
+
 ## Folders
 
 - `site/`: the real site. Next.js 16 + Payload CMS 3 (admin at `/admin`), SQLite. See `site/README.md` for running it and using the admin.
