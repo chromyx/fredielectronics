@@ -13,6 +13,8 @@ Rebuild of fredielectronics.com as a bilingual portfolio site for investors and 
 
 ## Setting up from a fresh clone
 
+Some photo paths are long. On Windows, clone with `git clone -c core.longpaths=true https://github.com/chromyx/fredielectronics.git`.
+
 1. `cd site && npm ci`
 2. Copy `.env.example` to `.env` and set a random `PAYLOAD_SECRET`.
 3. `mkdir data` and copy `content-db/fredi.db` to `data/fredi.db`. This is all the content (75 projects, services, brands, texts, settings) with logins and messages removed.
