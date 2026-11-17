@@ -1,0 +1,29 @@
+Sistem Konference
+https://fredielectronics.com/sistem-konference/
+
+Sistem Konference, Universiteti i Sporteve Tirane
+Objekti: Instalimi i sistemit te konferencave për  Universitetin e Sporteve .
+Qëllimi i Projektit
+Qëllimi i projektit ka qenë ngritja e një sistemi profesional audio për konferenca , që siguron cilësi të lartë të zërit për komunikim të qartë dhe formal gjatë mbledhjeve akademike, leksioneve, seminareve dhe takimeve zyrtare.
+Komponentët e Sistemit të Instaluar
+1. Mikrofon Podiumi për Delegatët
+Instalimi i një mikrofoni të dedikuar për përdorim nga pjesëmarrësit/delegatët në sallë.
+Mikrofoni përmban teknologji kondensatore me drejtim të ngushtë për të reduktuar zhurmat e ambientit dhe për të përqendruar regjistrimin tek folësi.
+Dizajni ergonomik dhe aktivizimi i lehtë me buton e bën ideal për përdorim të përditshëm.
+2. Mikrofon Podiumi për Kryesuesin (Chairman)
+Mikrofon i veçantë për kryesuesin e mbledhjes, me funksione shtesë:
+Ndërprerje zëri (override) për të marrë fjalën
+Buton “priority” për kontroll të rrjedhës së diskutimit
+Kontroll të drejtëpërdrejtë të mikrofonave të delegatëve
+3. Njësi Kontrolli për Mikrofonat
+Njësi qëndrore kontrolli e cila menaxhon të gjithë sistemin e mikrofonave:
+Aktivizim automatik ose manual i mikrofonave
+Menaxhimi i numrit maksimal të folësve njëkohësisht
+Lidhje me sistemin e përforcimit të zërit të sallës (nëse i instaluar)
+E pajisur me dalje audio për regjistrim ose transmetim të jashtëm (nëse kërkohet).
+Përfundime
+Punimet janë realizuar me pajisje profesionale të standardit ndërkombëtar, të përshtatshme për nevojat akademike dhe zyrtare të Universitetit të Sporteve. Sistemi ofron:
+Zë të qartë dhe të pastër për të gjithë pjesëmarrësit
+Funksionim të thjeshtë dhe praktik
+Besueshmëri në përdorim afatgjatë
+Instalimi është kryer me kujdes teknik dhe estetik, duke ruajtur funksionalitetin dhe pamjen profesionale të ambienteve të institucionit.
