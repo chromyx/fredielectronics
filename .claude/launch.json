@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5500", "--directory", "C:/Users/bergi/fredielectronics"],
+      "port": 5500
+    },
+    {
+      "name": "site",
+      "runtimeExecutable": "C:/Program Files/nodejs/npm.cmd",
+      "runtimeArgs": ["--prefix", "C:/Users/bergi/fredielectronics/site", "run", "dev"],
+      "port": 3000
+    }
+  ]
+}

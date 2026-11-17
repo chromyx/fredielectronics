@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fredi Electronics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500..800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #141c2a;        /* hero, contact band, footer */
+  --navy-2: #1c2636;
+  --steel: #3b6e94;       /* stats panel, tags, accents */
+  --steel-d: #2f5b7c;
+  --sky: #e4eef6;         /* pill labels, soft cards */
+  --mist: #f3f6f9;        /* alternate section ground */
+  --white: #ffffff;
+  --ink: #18202c;
+  --mut: #5a6472;
+  --line: #dde3ea;
+  --r: #ff5a4f; --g: #2fd480; --b: #6ea0ff;
+  --fav: #ffc933;
+  --wa: #25d366;
+  --head: "Archivo", sans-serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --wrap: 1360px;
+  --gut: max(clamp(18px, 4vw, 56px), calc((100vw - var(--wrap)) / 2));
+  --radius: 14px;
+  --t-sm: clamp(14px, .3vw + 10px, 16px);
+  --t-body: clamp(16px, .3vw + 12px, 18px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 90px; }
+body { background: var(--white); color: var(--ink); font: 400 var(--t-body)/1.65 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--b); outline-offset: 3px; }
+.pad { padding-left: var(--gut); padding-right: var(--gut); }
+h1, h2, h3 { font-family: var(--head); font-weight: 700; letter-spacing: -0.015em; line-height: 1.12; }
+h2 { font-size: clamp(30px, 2.6vw, 46px); }
+.pill { display: inline-block; padding: 5px 12px; border-radius: 6px; background: var(--sky); color: var(--steel-d); font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+.lede { color: var(--mut); font-size: clamp(17px, .4vw + 12px, 20px); max-width: 60ch; }
+.section { padding-top: clamp(64px, 7vw, 120px); padding-bottom: clamp(64px, 7vw, 120px); }
+.head-row { display: flex; justify-content: space-between; align-items: end; gap: 20px 40px; flex-wrap: wrap; margin-bottom: clamp(28px, 3vw, 48px); }
+
+/* ---------- Buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 24px; border-radius: 6px; font-weight: 600; font-size: var(--t-sm); transition: background-color .2s, color .2s, transform .2s; }
+.btn:hover { transform: translateY(-1px); }
+.btn.navy { background: var(--navy); color: #fff; }
+.btn.navy:hover { background: var(--steel-d); }
+.btn.white { background: #fff; color: var(--navy); }
+.btn.outline { border: 1.5px solid var(--navy); color: var(--navy); }
+.btn.outline:hover { background: var(--navy); color: #fff; }
+.link { font-weight: 600; color: var(--steel-d); display: inline-flex; align-items: center; gap: 8px; }
+.link svg, .btn svg { width: 18px; height: 18px; transition: transform .2s; }
+.link:hover svg { transform: translateX(3px); }
+.u-link { font-weight: 600; color: #fff; border-bottom: 2px solid rgba(255,255,255,.6); padding-bottom: 3px; }
+
+/* ---------- Top bar + header ---------- */
+.topbar { background: var(--navy); color: #d7dee8; font-size: 13.5px; }
+.topbar .in { display: flex; align-items: center; gap: 24px; min-height: 40px; }
+.topbar a { display: inline-flex; align-items: center; gap: 8px; }
+.topbar a:hover { color: #fff; }
+.topbar svg { width: 15px; height: 15px; opacity: .8; }
+.topbar .sp { flex: 1; }
+.lang { display: flex; border: 1px solid rgba(255,255,255,.35); border-radius: 5px; overflow: hidden; font-weight: 600; font-size: 12.5px; }
+.lang button { padding: 4px 10px; color: #c2cad6; }
+.lang button[aria-pressed="true"] { background: #fff; color: var(--navy); }
+.hdr { position: sticky; top: 0; z-index: 60; background: rgba(255,255,255,.97); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); transition: box-shadow .3s; }
+.hdr.scrolled { box-shadow: 0 6px 24px rgba(20,28,42,.08); }
+.hdr .in { display: flex; align-items: center; gap: clamp(16px, 2vw, 36px); height: clamp(74px, 5.5vw, 92px); }
+.hdr .logo { margin-right: auto; }
+.hdr .logo img { height: clamp(40px, 3vw, 54px); width: auto; }
+.nav { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 34px); font-size: 15.5px; font-weight: 500; }
+.nav a { position: relative; padding: 8px 0; color: #2b3443; }
+.nav a:not(.btn):not(.fav-l)::after { content: ""; position: absolute; left: 0; right: 100%; bottom: 2px; height: 2px; background: var(--steel); transition: right .3s; }
+.nav a:hover::after, .nav a.cur::after { right: 0; }
+.nav a.cur { color: var(--ink); }
+.nav .fav-l { padding: 6px 12px; border-radius: 6px; background: var(--fav); color: var(--ink); font-weight: 600; }
+.nav .btn { padding: 0 20px; color: #fff; }
+.menu-btn { display: none; font-weight: 600; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 6px; }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; background: var(--navy); color: #fff; margin-bottom: clamp(70px, 6vw, 96px); }
+.hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 90% at 0% 100%, rgba(59,110,148,.35), transparent 70%); pointer-events: none; }
+.hero-in { position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: clamp(520px, 72vh, 760px); }
+.hero-text { padding: clamp(48px, 6vw, 110px) clamp(24px, 4vw, 72px) clamp(110px, 9vw, 150px) var(--gut); display: flex; flex-direction: column; justify-content: center; }
+.proof { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: #d7dee8; margin-bottom: 24px; }
+.proof .faces { display: flex; }
+.proof .faces img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--navy); }
+.proof .faces img + img { margin-left: -12px; }
+.proof b { color: #fff; }
+.hero h1 { font-size: clamp(38px, 3.6vw, 66px); max-width: 15ch; }
+.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+.hero h1 .ln span { display: block; }
+.hero .sub { margin-top: 20px; max-width: 46ch; color: #c9d2de; font-size: clamp(17px, .4vw + 12px, 20px); }
+.hero .btns { display: flex; align-items: center; gap: 28px; margin-top: 34px; flex-wrap: wrap; }
+.hero-media { position: relative; overflow: hidden; }
+.slides { position: absolute; inset: 0; }
+.slides img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; clip-path: inset(0 100% 0 0); transform: scale(1.06); }
+.slides img.prev { clip-path: inset(0 0 0 0); transform: scale(1); z-index: 1; }
+.slides img.on { clip-path: inset(0 0 0 0); transform: scale(1); z-index: 2; transition: clip-path 1.4s cubic-bezier(.75,0,.2,1), transform 9s cubic-bezier(.25,.6,.3,1); }
+.slides img.first { transition: transform 9s cubic-bezier(.25,.6,.3,1); }
+.scan { position: absolute; top: 0; bottom: 0; left: 0; z-index: 3; width: 9px; display: flex; gap: 1px; opacity: 0; pointer-events: none; filter: drop-shadow(0 0 14px rgba(255,255,255,.6)); }
+.scan i { flex: 1; } .scan i:nth-child(1) { background: var(--r); } .scan i:nth-child(2) { background: var(--g); } .scan i:nth-child(3) { background: var(--b); }
+.now { position: absolute; z-index: 4; top: 22px; right: 22px; display: flex; align-items: center; gap: 14px; padding: 8px 8px 8px 16px; border-radius: 999px; background: rgba(20,28,42,.72); backdrop-filter: blur(8px); font-size: 14px; max-width: calc(100% - 44px); }
+.now .title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now .bars { display: flex; gap: 4px; }
+.now .bars button { width: 22px; height: 20px; position: relative; }
+.now .bars button::before, .now .bars b { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 4px; border-radius: 2px; }
+.now .bars button::before { background: rgba(255,255,255,.3); }
+.now .bars b { background: #fff; transform-origin: left; transform: scaleX(0); }
+.now a { flex: none; padding: 6px 14px; border-radius: 999px; background: #fff; color: var(--navy); font-weight: 600; font-size: 13.5px; }
+.stats { position: absolute; z-index: 5; left: calc(var(--gut) + clamp(0px, 8vw, 160px)); right: var(--gut); bottom: 0; transform: translateY(50%); display: grid; grid-template-columns: repeat(4, 1fr); background: var(--steel); color: #fff; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(20,28,42,.25); }
+.stats div { padding: clamp(18px, 1.8vw, 30px) 12px; text-align: center; }
+.stats div + div { border-left: 1px solid rgba(255,255,255,.18); }
+.stats b { display: block; font-family: var(--head); font-weight: 800; font-size: clamp(28px, 2.6vw, 48px); line-height: 1; }
+.stats span { display: block; margin-top: 8px; font-size: var(--t-sm); color: #e0eaf3; }
+
+/* ---------- About ---------- */
+.about-in { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 96px); align-items: center; }
+.about-pic { position: relative; }
+.about-pic img { width: 100%; aspect-ratio: 5/4; object-fit: cover; border-radius: var(--radius); }
+.about-pic .badge { position: absolute; left: 20px; bottom: 20px; background: #fff; border-radius: 10px; padding: 14px 18px; box-shadow: 0 12px 30px rgba(20,28,42,.18); display: flex; align-items: center; gap: 12px; max-width: 300px; }
+.about-pic .badge b { font-family: var(--head); font-weight: 800; font-size: 30px; color: var(--steel); line-height: 1; }
+.about-pic .badge span { font-size: 14px; color: var(--mut); line-height: 1.3; }
+.about h2 { margin-bottom: 18px; }
+.about p { color: var(--mut); margin-bottom: 16px; max-width: 60ch; }
+.checks { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 26px 0 30px; }
+.checks li { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.checks li::before { content: ""; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f5b7c' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/14px no-repeat; }
+
+/* ---------- Services mosaic ---------- */
+.services { background: var(--mist); }
+.mosaic { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(220px, 17vw, 300px); gap: 14px; }
+.tile-s { position: relative; overflow: hidden; border-radius: var(--radius); color: #fff; text-align: left; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(18px, 1.6vw, 28px); isolation: isolate; }
+.tile-s img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.tile-s::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20,28,42,.05) 30%, rgba(20,28,42,.85) 100%); }
+.tile-s:hover img { transform: scale(1.05); }
+.tile-s h3 { font-size: clamp(20px, 1.5vw, 27px); }
+.tile-s p { font-size: 14.5px; color: #dbe3ec; margin-top: 6px; max-width: 34ch; line-height: 1.45; }
+.tile-s .go { position: absolute; top: 18px; right: 18px; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.18); display: grid; place-items: center; transition: background-color .2s, color .2s; }
+.tile-s .go svg { width: 18px; height: 18px; }
+.tile-s:hover .go { background: #fff; color: var(--navy); }
+.tile-s.intro { background: var(--steel); justify-content: space-between; }
+.tile-s.intro::before { display: none; }
+.tile-s.intro h2 { color: #fff; font-size: clamp(28px, 2.3vw, 42px); }
+.tile-s.intro p { font-size: var(--t-sm); color: #e0eaf3; }
+.tile-s.intro ol { list-style: none; counter-reset: s; display: grid; gap: 4px; font-size: 14.5px; font-weight: 500; }
+.tile-s.intro li { counter-increment: s; }
+.tile-s.intro li::before { content: counter(s) ". "; opacity: .7; }
+.tile-s.favt { background: var(--fav); color: var(--ink); }
+.tile-s.favt::before { display: none; }
+.tile-s.favt p { color: #3d3413; }
+.tile-s.favt .go { background: rgba(20,28,42,.1); }
+
+/* ---------- Projects ---------- */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: clamp(24px, 2.4vw, 36px); }
+.filters button { min-height: 42px; padding: 0 18px; border-radius: 6px; border: 1.5px solid var(--line); font-size: var(--t-sm); font-weight: 500; color: #2b3443; background: #fff; transition: background-color .2s, color .2s, border-color .2s; }
+.filters button:hover { border-color: var(--steel); }
+.filters button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.filters sup { font-size: .7em; margin-left: 4px; opacity: .7; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 1.8vw, 30px); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: box-shadow .3s, transform .3s; }
+.card:hover, .card:focus-visible { box-shadow: 0 18px 40px rgba(20,28,42,.12); transform: translateY(-3px); }
+.card .ph { aspect-ratio: 16/10; overflow: hidden; background: var(--sky); }
+.card img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.card:hover img { transform: scale(1.04); }
+.card .body { padding: 18px 20px 22px; }
+.card .meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13.5px; color: var(--mut); }
+.card .tag { padding: 3px 10px; border-radius: 5px; background: var(--sky); color: var(--steel-d); font-weight: 600; }
+.card h3 { font-size: clamp(18px, 1.2vw, 22px); color: var(--steel-d); line-height: 1.3; }
+.more-row { display: flex; justify-content: center; margin-top: clamp(32px, 3vw, 52px); }
+.more-row[hidden] { display: none; }
+
+/* ---------- FAV feature ---------- */
+.fav-card { display: grid; grid-template-columns: 1.15fr 1fr; border-radius: var(--radius); overflow: hidden; background: var(--fav); }
+.fav-text { padding: clamp(32px, 4vw, 72px); }
+.fav-text .pill { background: rgba(20,28,42,.1); color: var(--ink); }
+.fav-text h2 { font-size: clamp(32px, 3vw, 54px); }
+.fav-text h2 small { display: block; font-family: var(--body); font-size: .44em; font-weight: 600; letter-spacing: 0; margin-top: 10px; }
+.fav-text p { margin-top: 18px; max-width: 52ch; color: #3d3413; }
+.fav-text dl { display: flex; flex-wrap: wrap; gap: 18px clamp(24px, 3vw, 56px); margin: 28px 0 32px; }
+.fav-text dt { font-family: var(--head); font-weight: 800; font-size: clamp(30px, 2.6vw, 48px); line-height: 1; }
+.fav-text dd { font-size: 14px; margin-top: 6px; color: #3d3413; }
+.fav-side { background: var(--navy); display: grid; place-items: center; padding: clamp(28px, 3vw, 56px); }
+.screen { width: min(100%, clamp(240px, 19vw, 340px)); aspect-ratio: 9/16; background: #0b1018; border: 10px solid #2a3547; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.4); }
+.screen .slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 9%; opacity: 0; transition: opacity .6s; }
+.screen .slide.on { opacity: 1; }
+.screen .slide strong { font-family: var(--head); font-weight: 800; font-size: clamp(28px, 2.3vw, 44px); line-height: 1.02; color: #fff; }
+.screen .slide span { color: rgba(255,255,255,.85); margin-top: 10px; font-size: 14px; }
+.screen .s1 { background: radial-gradient(120% 80% at 30% 20%, #ff6a4d, #a3194a 60%, #3a0a2c); }
+.screen .s2 { background: radial-gradient(120% 80% at 70% 30%, #5cd6ff, #2f56e0 55%, #131c58); }
+.screen .s3 { background: radial-gradient(120% 80% at 40% 30%, #ffdf6b, #ff9a1f 50%, #6b2c00); }
+.screen .tick { position: absolute; left: 0; bottom: 0; height: 5px; background: #fff; z-index: 2; width: 0; }
+
+/* ---------- Clients ---------- */
+.clients { background: var(--mist); }
+.client-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.client-grid div { display: grid; place-items: center; text-align: center; min-height: 92px; padding: 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; font-family: var(--head); font-weight: 600; font-size: clamp(14px, 1vw, 17px); color: #3a4554; }
+.clients .note { margin-top: 14px; font-size: 13.5px; color: var(--mut); }
+
+/* ---------- Contact ---------- */
+.contact { background: var(--navy); color: #fff; }
+.contact-in { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(32px, 5vw, 96px); align-items: start; }
+.contact .pill { background: rgba(255,255,255,.1); color: #d7e3ef; }
+.contact h2 { margin-bottom: 16px; }
+.contact .lede { color: #c9d2de; }
+.c-list { list-style: none; display: grid; gap: 14px; margin: 32px 0; }
+.c-list li { display: flex; gap: 14px; align-items: flex-start; }
+.c-list .ic { flex: none; width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,.08); display: grid; place-items: center; }
+.c-list .ic svg { width: 20px; height: 20px; }
+.c-list small { display: block; color: #9eabbb; font-size: 13.5px; }
+.c-list a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.btn.wa-b { background: var(--wa); color: #06300f; }
+form.cf { background: #fff; color: var(--ink); border-radius: var(--radius); padding: clamp(24px, 3vw, 48px); display: grid; gap: 16px; box-shadow: 0 30px 60px rgba(0,0,0,.25); }
+form.cf h3 { font-size: clamp(20px, 1.5vw, 26px); }
+form.cf label { display: grid; gap: 6px; font-size: 14px; font-weight: 500; color: #3a4554; }
+form.cf input, form.cf textarea { font: inherit; font-size: 16px; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 8px; background: #fbfcfd; color: var(--ink); }
+form.cf input:focus, form.cf textarea:focus { outline: none; border-color: var(--steel); background: #fff; }
+form.cf textarea { min-height: 130px; resize: vertical; }
+form.cf .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+form.cf .btn { justify-self: start; }
+
+/* ---------- Footer ---------- */
+.foot { background: #0e141f; color: #c2cad6; font-size: 15px; }
+.foot-in { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; padding-top: clamp(48px, 5vw, 80px); padding-bottom: clamp(36px, 4vw, 60px); }
+.foot img { height: 44px; width: auto; filter: invert(1) brightness(1.7); margin-bottom: 18px; }
+.foot h4 { color: #fff; font-family: var(--head); font-size: 16px; margin-bottom: 14px; }
+.foot ul { list-style: none; display: grid; gap: 8px; }
+.foot a:hover { color: #fff; }
+.foot-bot { border-top: 1px solid #232c3b; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 22px; padding-bottom: 22px; font-size: 13.5px; color: #8a96a7; }
+
+/* ---------- Viewer ---------- */
+.viewer { position: fixed; inset: 0; z-index: 80; background: #0d131d; color: #eef1f5; display: none; grid-template-rows: auto 1fr auto; }
+.viewer.open { display: grid; }
+.v-top { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 18px var(--gut); }
+.v-top h3 { font-size: clamp(18px, 1.5vw, 26px); }
+.v-top .cat { color: #a3aebd; font-size: var(--t-sm); margin-top: 2px; }
+.v-close { min-height: 46px; padding: 0 22px; border-radius: 6px; background: #fff; color: var(--ink); font-weight: 600; font-size: var(--t-sm); }
+.v-stage { position: relative; display: grid; grid-template-columns: 1fr minmax(280px, 26%); gap: clamp(20px, 2.4vw, 48px); padding: 0 var(--gut); min-height: 0; }
+.v-img { position: relative; min-height: 0; }
+.v-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.v-nav { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.v-nav button { pointer-events: auto; width: 56px; height: 56px; border-radius: 50%; background: rgba(13,19,29,.72); border: 1.5px solid rgba(255,255,255,.4); font-size: 24px; line-height: 1; }
+.v-nav button:hover { background: #fff; color: var(--ink); }
+.v-text { overflow: auto; color: #c5cdd8; line-height: 1.6; padding-right: 6px; }
+.v-text .counter { font-weight: 600; color: #fff; margin-bottom: 14px; }
+.v-thumbs { display: flex; gap: 8px; padding: 16px var(--gut) 20px; overflow-x: auto; }
+.v-thumbs button { flex: none; width: clamp(88px, 6vw, 120px); aspect-ratio: 3/2; border-radius: 6px; overflow: hidden; opacity: .5; transition: opacity .2s; }
+.v-thumbs button:hover { opacity: .85; }
+.v-thumbs button[aria-current="true"] { opacity: 1; outline: 2px solid #fff; outline-offset: 2px; }
+.v-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- WhatsApp ---------- */
+.wa { position: fixed; right: clamp(16px, 1.6vw, 28px); bottom: clamp(16px, 1.6vw, 28px); z-index: 70; display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 22px 0 16px; border-radius: 999px; background: var(--wa); color: #06300f; font-weight: 600; font-size: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: transform .2s; }
+.wa:hover { transform: translateY(-3px); }
+.wa svg { width: 26px; height: 26px; }
+
+/* entrance: content is visible by default; the animation only plays on top */
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } }
+html.motion .reveal.in { animation: rise .8s cubic-bezier(.2,.8,.2,1) backwards; }
+
+/* ---------- Tablet & phone ---------- */
+@media (max-width: 1080px) {
+  .topbar .hide-m { display: none; }
+  .nav { display: none; position: fixed; left: 0; right: 0; bottom: 0; top: var(--hdr-h, 114px); background: #fff; flex-direction: column; align-items: flex-start; padding: 24px var(--gut); gap: 4px; font-size: 22px; border-top: 1px solid var(--line); }
+  .nav.open { display: flex; }
+  .nav .btn { margin-top: 14px; }
+  .menu-btn { display: block; }
+  .hero-in { grid-template-columns: 1fr; min-height: 0; }
+  .hero-text { padding: 48px var(--gut) 40px; }
+  .hero-media { aspect-ratio: 4/3; }
+  .stats { position: relative; left: auto; right: auto; transform: none; margin: -40px var(--gut) 0; grid-template-columns: 1fr 1fr; }
+  .stats div:nth-child(3) { border-left: 0; }
+  .stats div:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.18); }
+  .hero { margin-bottom: 0; padding-bottom: 32px; }
+  .about-in, .contact-in, .fav-card { grid-template-columns: 1fr; }
+  .mosaic { grid-template-columns: 1fr 1fr; }
+  .grid { grid-template-columns: 1fr 1fr; }
+  .client-grid { grid-template-columns: repeat(3, 1fr); }
+  .foot-in { grid-template-columns: 1fr 1fr; }
+  .v-stage { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .v-text { max-height: 22vh; }
+}
+@media (max-width: 640px) {
+  .mosaic { grid-template-columns: 1fr; grid-auto-rows: 240px; }
+  .grid { grid-template-columns: 1fr; }
+  .client-grid { grid-template-columns: 1fr 1fr; }
+  .checks { grid-template-columns: 1fr; }
+  form.cf .row2 { grid-template-columns: 1fr; }
+  .foot-in { grid-template-columns: 1fr; }
+  .wa .t { display: none; }
+  .wa { width: 56px; padding: 0; justify-content: center; }
+  .now .title { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.motion) *, html:not(.motion) *::before, html:not(.motion) *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3Z"/></symbol>
+</svg>
+
+<div class="topbar"><div class="in pad">
+  <a href="tel:+355696752032"><svg><use href="#i-phone"/></svg>+355 69 675 2032</a>
+  <a href="mailto:fredielectronics@gmail.com" class="hide-m"><svg><use href="#i-mail"/></svg>fredielectronics@gmail.com</a>
+  <a href="#contact" class="hide-m"><svg><use href="#i-pin"/></svg>Rr. Kavajës, Tiranë</a>
+  <span class="sp"></span>
+  <a href="https://instagram.com/fredielectronics" target="_blank" rel="noopener" class="hide-m"><svg><use href="#i-ig"/></svg>@fredielectronics</a>
+  <div class="lang" role="group" aria-label="Language">
+    <button data-lang="sq" aria-pressed="true">SQ</button>
+    <button data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</div></div>
+
+<header class="hdr" id="hdr"><div class="in pad">
+  <a class="logo" href="#top" aria-label="Fredi Electronics"><img src="../backup/images/2024/08/logodesignfredi-scaled.png" alt="Fredi Electronics"></a>
+  <nav class="nav" id="nav">
+    <a href="#about" data-i="nav_about"></a>
+    <a href="#services" data-i="nav_services"></a>
+    <a href="#fav" class="fav-l">FAV × TEG</a>
+    <a href="#projects" data-i="nav_projects"></a>
+    <a href="#contact" data-i="nav_contact"></a>
+    <a href="#contact" class="btn navy" data-i="talk"></a>
+  </nav>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" data-i="menu"></button>
+</div></header>
+
+<main id="top">
+  <section class="hero" aria-label="Fredi Electronics">
+    <div class="hero-in">
+      <div class="hero-text">
+        <div class="proof"><span class="faces" id="faces"></span><span data-i="proof"></span></div>
+        <h1><span class="ln"><span data-i="h1a"></span></span><span class="ln"><span data-i="h1b"></span></span></h1>
+        <p class="sub" data-i="hero_sub"></p>
+        <div class="btns">
+          <a class="btn white" href="#projects" data-i="see_projects"></a>
+          <a class="u-link" href="#services" data-i="our_services"></a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <div class="slides" id="slides"></div>
+        <div class="scan" id="scan"><i></i><i></i><i></i></div>
+        <div class="now">
+          <span class="title" id="nowTitle"></span>
+          <span class="bars" id="bars"></span>
+          <a href="#" id="nowOpen" data-i="open"></a>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div><b>1991</b><span data-i="f_year"></span></div>
+      <div><b data-count="700">700+</b><span data-i="f_proj"></span></div>
+      <div><b data-count="30">30+</b><span data-i="f_brands"></span></div>
+      <div><b data-i="f_where_v"></b><span data-i="f_where"></span></div>
+    </div>
+  </section>
+
+  <section class="section about" id="about"><div class="about-in pad">
+    <div class="about-pic reveal">
+      <img id="aboutImg" alt="" loading="lazy">
+      <div class="badge"><b>30+</b><span data-i="badge"></span></div>
+    </div>
+    <div class="reveal">
+      <span class="pill" data-i="nav_about"></span>
+      <h2 data-i="about_h"></h2>
+      <p data-i="about_p1"></p>
+      <p data-i="about_p2"></p>
+      <ul class="checks">
+        <li data-i="ck1"></li><li data-i="ck2"></li><li data-i="ck3"></li><li data-i="ck4"></li>
+      </ul>
+      <a class="link" href="#projects"><span data-i="see_projects"></span><svg><use href="#i-arrow"/></svg></a>
+    </div>
+  </div></section>
+
+  <section class="section services" id="services"><div class="pad">
+    <div class="mosaic" id="mosaic"></div>
+  </div></section>
+
+  <section class="section" id="projects"><div class="pad">
+    <div class="head-row reveal">
+      <div><span class="pill" data-i="nav_projects"></span><h2 data-i="projects_h"></h2></div>
+      <p class="lede" data-i="projects_lede"></p>
+    </div>
+    <div class="filters" id="filters" role="group"></div>
+    <div class="grid" id="grid"></div>
+    <div class="more-row" id="moreRow"><button class="btn outline" id="more"></button></div>
+  </div></section>
+
+  <section class="section" id="fav" style="padding-top:0"><div class="pad">
+    <div class="fav-card reveal">
+      <div class="fav-text">
+        <span class="pill">FAV × TEG</span>
+        <h2>FAV Digital Advertising Network<small data-i="fav_small"></small></h2>
+        <p data-i="fav_p"></p>
+        <dl>
+          <div><dt>13</dt><dd data-i="fav_s1"></dd></div>
+          <div><dt>10.5M+</dt><dd data-i="fav_s2"></dd></div>
+          <div><dt>12h+</dt><dd data-i="fav_s3"></dd></div>
+        </dl>
+        <a class="btn navy" href="https://fav.al/" target="_blank" rel="noopener"><span data-i="fav_btn"></span><svg><use href="#i-out"/></svg></a>
+      </div>
+      <div class="fav-side">
+        <div class="screen" id="screen" aria-hidden="true">
+          <div class="slide s1 on"><strong data-i="ad1"></strong><span>FAV · TEG</span></div>
+          <div class="slide s2"><strong data-i="ad2"></strong><span data-i="ad2s"></span></div>
+          <div class="slide s3"><strong data-i="ad3"></strong><span>fav.al</span></div>
+          <div class="tick" id="tick"></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="section clients"><div class="pad">
+    <div class="head-row reveal">
+      <div><span class="pill" data-i="trusted_pill"></span><h2 data-i="trusted_h"></h2></div>
+    </div>
+    <div class="client-grid reveal">
+      <div>KQZ</div><div>AKEP</div><div>AMA</div><div>Ministria e Arsimit</div><div>Gjykata e Apelit</div>
+      <div>Bashkia Tiranë</div><div>Bashkia Durrës</div><div>Universiteti i Vlorës</div><div>Politekniku</div><div>Forcat Detare</div>
+    </div>
+    <p class="note" data-i="logos_note"></p>
+  </div></section>
+
+  <section class="section contact" id="contact"><div class="contact-in pad">
+    <div class="reveal">
+      <span class="pill" data-i="nav_contact"></span>
+      <h2 data-i="contact_h"></h2>
+      <p class="lede" data-i="contact_lede"></p>
+      <ul class="c-list">
+        <li><span class="ic"><svg><use href="#i-pin"/></svg></span><div><small data-i="c_addr"></small>Rr. Kavajës, P.207, Sh.2, Tiranë 1001</div></li>
+        <li><span class="ic"><svg><use href="#i-phone"/></svg></span><div><small data-i="c_phone"></small><a href="tel:+355696752032">+355 69 675 2032</a></div></li>
+        <li><span class="ic"><svg><use href="#i-mail"/></svg></span><div><small>Email</small><a href="mailto:fredielectronics@gmail.com">fredielectronics@gmail.com</a></div></li>
+        <li><span class="ic"><svg><use href="#i-clock"/></svg></span><div><small data-i="c_hours"></small><span data-i="c_hours_v"></span></div></li>
+      </ul>
+      <a class="btn wa-b" href="https://wa.me/355696752032" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg><span data-i="wa_long"></span></a>
+    </div>
+    <form class="cf reveal" onsubmit="return false">
+      <h3 data-i="fm_h"></h3>
+      <div class="row2">
+        <label><span data-i="fm_name"></span><input autocomplete="name"></label>
+        <label><span data-i="fm_contact"></span><input autocomplete="email"></label>
+      </div>
+      <label><span data-i="fm_msg"></span><textarea></textarea></label>
+      <button class="btn navy" data-i="fm_send"></button>
+    </form>
+  </div></section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in pad">
+    <div>
+      <img src="../backup/images/2024/08/logodesignfredi-scaled.png" alt="Fredi Electronics">
+      <p>Fredi Electronics sh.p.k.<br>Rr. Kavajës, P.207, Sh.2, Tiranë 1001<br><a href="tel:+355696752032">+355 69 675 2032</a><br><a href="mailto:fredielectronics@gmail.com">fredielectronics@gmail.com</a></p>
+    </div>
+    <div><h4 data-i="f_nav"></h4><ul>
+      <li><a href="#about" data-i="nav_about"></a></li><li><a href="#services" data-i="nav_services"></a></li>
+      <li><a href="#fav">FAV × TEG</a></li><li><a href="#projects" data-i="nav_projects"></a></li><li><a href="#contact" data-i="nav_contact"></a></li>
+    </ul></div>
+    <div><h4 data-i="nav_services"></h4><ul id="footSvc"></ul></div>
+    <div><h4 data-i="f_follow"></h4><ul>
+      <li><a href="https://instagram.com/fredielectronics" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="https://wa.me/355696752032" target="_blank" rel="noopener">WhatsApp</a></li>
+      <li><a href="https://fav.al/" target="_blank" rel="noopener">fav.al</a></li>
+    </ul></div>
+  </div>
+  <div class="foot-bot pad"><span>© 2026 Fredi Electronics sh.p.k.</span><span data-i="f_where"></span></div>
+</footer>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vTitle">
+  <div class="v-top">
+    <div><h3 id="vTitle"></h3><div class="cat" id="vCat"></div></div>
+    <button class="v-close" id="vClose" data-i="close"></button>
+  </div>
+  <div class="v-stage">
+    <div class="v-img"><img id="vImg" alt=""><div class="v-nav"><button id="vPrev" aria-label="Previous">‹</button><button id="vNext" aria-label="Next">›</button></div></div>
+    <div class="v-text"><p class="counter" id="vCounter"></p><p id="vText"></p></div>
+  </div>
+  <div class="v-thumbs" id="vThumbs"></div>
+</div>
+
+<a class="wa" href="https://wa.me/355696752032" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg><use href="#i-wa"/></svg><span class="t" data-i="wa_short"></span>
+</a>
+
+<script src="projects.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+const T = {
+  sq: {
+    nav_about: "Rreth nesh", nav_services: "Shërbimet tona", nav_projects: "Projekte", nav_contact: "Kontakt", menu: "Menu", talk: "Na kontaktoni",
+    proof: "Mbi <b>700 projekte</b> të realizuara",
+    h1a: "Ju sillni idenë,", h1b: "ne e realizojmë.",
+    hero_sub: "Ekrane LED, audio-video, sisteme konference, siguri dhe energji – të projektuara, instaluara dhe mirëmbajtura nga ekipi ynë që nga 1991.",
+    see_projects: "Shikoni projektet", our_services: "Shërbimet tona", open: "Hap",
+    f_year: "viti i themelimit", f_proj: "projekte të realizuara", f_brands: "marka partnere globale", f_where: "Shqipëri & Kosovë", f_where_v: "AL & KS",
+    badge: "marka globale, me Ecler si partner ekskluziv",
+    about_h: "Integrues sistemesh për institucione dhe biznese",
+    about_p1: "Fredi Electronics filloi në 1991 si distributor i markave profesionale elektronike në Shqipëri. Sot montojmë vetë panelet tona LED dhe dorëzojmë sisteme të plota audio, video, siguri dhe ndriçimi, gati për punë.",
+    about_p2: "Punojmë me mbi 30 marka globale dhe qëndrojmë pranë klientëve edhe pas instalimit.",
+    ck1: "Konceptim & projektim", ck2: "Furnizim nga 30+ marka", ck3: "Instalim profesional", ck4: "Mirëmbajtje & suport",
+    svc_h: "Shërbimet tona", svc_intro: "Një partner për gjithë projektin.",
+    steps: ["Konceptim", "Furnizim", "Instalim", "Integrim", "Mirëmbajtje"],
+    svc: [
+      ["led", "Ekrane LED & video wall", "Panele të montuara nga ne, në çdo madhësi, brenda dhe jashtë."],
+      ["av", "Audio & konferencë", "Salla mbledhjesh, sisteme konference dhe audio PA."],
+      ["sec", "Siguri & kontroll aksesi", "Kamera, kamera termike, alarme, tripode dhe barriera."],
+      ["sec", "Sisteme të integruara", "Parkim, orë pune, video-interfon dhe smart home."],
+      ["av", "Ndriçim skene", "Ndriçim LED, mikserë drite dhe efekte speciale."],
+      ["power", "Energji & UPS", "UPS deri në 80 kVA dhe furnizim i pandërprerë."],
+    ],
+    fav_tile: "Rrjeti i reklamimit digjital me 13 ekrane LED në TEG.",
+    projects_h: "Punimet tona", projects_lede: "Një përzgjedhje nga mbi 700 instalime në Shqipëri dhe Kosovë – nga sallat e këshillave bashkiake te ekranet LED në sheshe.",
+    all: "Të gjitha", photos: n => `${n} foto`, show_all: n => `Shikoni të gjitha projektet (${n})`,
+    cat: { led: "Ekrane LED", av: "Audio & Konferencë", sec: "Siguri & Akses", power: "Energji & UPS" },
+    fav_small: "Rrjeti i reklamimit digjital në TEG, nga Fredi Electronics",
+    fav_p: "FAV është rrjeti premium i ekraneve LED në TEG, i ndërtuar dhe i operuar nga ne. Me një fushatë të vetme, marka juaj shfaqet në të gjithë rrjetin, në çdo kat.",
+    fav_s1: "ekrane LED në 3 kate", fav_s2: "vizita në vit", fav_s3: "ekspozim çdo ditë", fav_btn: "Vizitoni fav.al",
+    ad1: "Marka juaj këtu.", ad2: "15 sekonda.", ad2s: "13 ekrane njëherësh", ad3: "Rezervoni hapësirën.",
+    trusted_pill: "Klientët", trusted_h: "Institucione që na kanë besuar",
+    logos_note: "Në faqen përfundimtare këtu do të shfaqen logot e klientëve.",
+    contact_h: "Le të flasim për projektin tuaj", contact_lede: "Na tregoni për hapësirën dhe idenë tuaj. Ju përgjigjemi brenda një dite pune.",
+    c_addr: "Adresa", c_phone: "Telefon", c_hours: "Orari", c_hours_v: "Do të konfirmohet",
+    wa_long: "Shkruani në WhatsApp", wa_short: "Na shkruani",
+    fm_h: "Dërgoni një mesazh", fm_name: "Emri", fm_contact: "Email ose telefon", fm_msg: "Mesazhi", fm_send: "Dërgo mesazhin",
+    f_nav: "Navigim", f_follow: "Na ndiqni", close: "Mbyll",
+  },
+  en: {
+    nav_about: "About us", nav_services: "Our services", nav_projects: "Projects", nav_contact: "Contact", menu: "Menu", talk: "Get in touch",
+    proof: "More than <b>700 projects</b> delivered",
+    h1a: "You bring the idea,", h1b: "we build it.",
+    hero_sub: "LED displays, audio-video, conference systems, security and power – designed, installed and maintained by our team since 1991.",
+    see_projects: "See our projects", our_services: "Our services", open: "Open",
+    f_year: "founded", f_proj: "completed projects", f_brands: "global brand partners", f_where: "Albania & Kosovo", f_where_v: "AL & KS",
+    badge: "global brands, with Ecler as exclusive partner",
+    about_h: "Systems integrator for institutions and businesses",
+    about_p1: "Fredi Electronics started in 1991 as a distributor of professional electronics brands in Albania. Today we assemble our own LED panels and deliver complete audio, video, security and lighting systems, ready to run.",
+    about_p2: "We work with more than 30 global brands and stay with our clients long after installation.",
+    ck1: "Concept & design", ck2: "Supply from 30+ brands", ck3: "Professional installation", ck4: "Maintenance & support",
+    svc_h: "Our services", svc_intro: "One partner for the whole project.",
+    steps: ["Design", "Supply", "Installation", "Integration", "Maintenance"],
+    svc: [
+      ["led", "LED displays & video walls", "Panels we assemble ourselves, any size, indoor and outdoor."],
+      ["av", "Audio & conference", "Meeting rooms, conference systems and PA audio."],
+      ["sec", "Security & access control", "CCTV, thermal cameras, alarms, turnstiles and barriers."],
+      ["sec", "Integrated systems", "Parking, time attendance, video intercom and smart home."],
+      ["av", "Stage lighting", "LED lighting, lighting desks and special effects."],
+      ["power", "Power & UPS", "UPS up to 80 kVA and uninterrupted power."],
+    ],
+    fav_tile: "Our digital advertising network of 13 LED screens at TEG.",
+    projects_h: "Our work", projects_lede: "A selection from more than 700 installations across Albania and Kosovo – from council chambers to LED screens in city squares.",
+    all: "All", photos: n => `${n} photos`, show_all: n => `See all projects (${n})`,
+    cat: { led: "LED displays", av: "Audio & Conference", sec: "Security & Access", power: "Power & UPS" },
+    fav_small: "The digital advertising network at TEG, by Fredi Electronics",
+    fav_p: "FAV is the premium LED screen network inside TEG, built and operated by us. One campaign puts your brand on the whole network, on every floor.",
+    fav_s1: "LED screens on 3 floors", fav_s2: "visits per year", fav_s3: "exposure every day", fav_btn: "Visit fav.al",
+    ad1: "Your brand here.", ad2: "15 seconds.", ad2s: "13 screens at once", ad3: "Book your slot.",
+    trusted_pill: "Clients", trusted_h: "Institutions that trust us",
+    logos_note: "On the final site, client logos will appear here.",
+    contact_h: "Let's talk about your project", contact_lede: "Tell us about your space and your idea. We reply within one working day.",
+    c_addr: "Address", c_phone: "Phone", c_hours: "Opening hours", c_hours_v: "To be confirmed",
+    wa_long: "Message us on WhatsApp", wa_short: "Chat with us",
+    fm_h: "Send us a message", fm_name: "Name", fm_contact: "Email or phone", fm_msg: "Message", fm_send: "Send message",
+    f_nav: "Navigation", f_follow: "Follow us", close: "Close",
+  },
+};
+
+// ?motion forces full animation even when the OS asks for reduced motion (handy for previewing)
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches && !new URLSearchParams(location.search).has("motion");
+if (!reduce) document.documentElement.classList.add("motion");
+let lang = "sq";
+const P = window.PROJECTS;
+const $ = s => document.querySelector(s);
+const title = p => p[lang];
+const img = (slug, i = 0) => { const p = P.find(p => p.slug.includes(slug)); return p ? p.images[i] || p.images[0] : ""; };
+const icon = id => `<svg><use href="#${id}"/></svg>`;
+
+// hero slides: landscape photos only, so nothing is cropped oddly
+const FEATURED = [["restaurimi-total-i-kqz", 1], ["bashkiamat", 0], ["ama-video-wall", 0], ["ledwall-p2-5", 1], ["universiteti-i-vlores", 0], ["video-wall-tek-akep", 2]];
+const featured = FEATURED.map(([f, i]) => { const p = P.find(p => p.slug.includes(f)); return p && Object.assign(Object.create(p), { hero: p.images[i] || p.images[0] }); }).filter(Boolean);
+// one photo per service tile, in the same order as T.svc
+const SVC_IMG = [["bashkiamat", 2], ["restaurimi-total-i-kqz", 3], ["kamerave-termike", 1], ["tripod-kalimi", 1], ["led-wall-world-vision", 1], ["ups-60kva", 1]];
+
+/* ---------------- i18n ---------------- */
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i]").forEach(el => { const v = T[lang][el.dataset.i]; if (typeof v === "string") el.innerHTML = v; });
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  renderMosaic(); renderFilters(); renderGrid(); hero.caption();
+  $("#footSvc").innerHTML = T[lang].svc.map(s => `<li><a href="#services">${s[1]}</a></li>`).join("");
+}
+document.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { lang = b.dataset.lang; applyLang(); });
+
+/* ---------------- Hero slideshow ---------------- */
+const hero = (() => {
+  const HOLD = 6500;
+  let idx = 0, t0 = 0;
+  function go(n, first) {
+    const prev = idx;
+    idx = (n + featured.length) % featured.length; t0 = performance.now();
+    document.querySelectorAll("#slides img").forEach((im, i) => {
+      im.classList.toggle("first", !!first && i === idx);
+      im.classList.toggle("prev", !first && i === prev && i !== idx);
+      im.classList.toggle("on", i === idx);
+    });
+    if (!first && !reduce) gsap.fromTo("#scan", { left: "0%", opacity: 1 }, { left: "100%", duration: 1.4, ease: "power3.inOut", onComplete: () => gsap.set("#scan", { opacity: 0 }) });
+    caption();
+  }
+  function caption() { const p = featured[idx]; if (p) $("#nowTitle").textContent = title(p); }
+  function tick(now) {
+    const p = Math.min(1, (now - t0) / HOLD);
+    document.querySelectorAll("#bars b").forEach((b, i) => b.style.transform = `scaleX(${i < idx ? 1 : i === idx ? p : 0})`);
+    if (p >= 1) go(idx + 1);
+    requestAnimationFrame(tick);
+  }
+  function start() {
+    $("#slides").innerHTML = featured.map((p, i) => `<img src="${p.hero}" alt="" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}>`).join("");
+    $("#bars").innerHTML = featured.map((p, i) => `<button aria-label="${i + 1}"><b></b></button>`).join("");
+    $("#bars").querySelectorAll("button").forEach((b, i) => b.onclick = () => go(i));
+    const first = $("#slides img");
+    const begin = () => { go(0, true); requestAnimationFrame(tick); };
+    first.complete ? begin() : first.addEventListener("load", begin, { once: true });
+  }
+  return { start, caption, current: () => featured[idx] };
+})();
+$("#nowOpen").onclick = e => { e.preventDefault(); openViewer(hero.current(), e.currentTarget); };
+$("#faces").innerHTML = [["bashkiamat", 2], ["restaurimi-total-i-kqz", 1], ["ledwall-p2-5", 0]].map(([s, i]) => `<img src="${img(s, i)}" alt="">`).join("");
+$("#aboutImg").src = img("keshilli-bashkiak-durres", 1);
+
+/* ---------------- Services mosaic ---------------- */
+function renderMosaic() {
+  const t = T[lang];
+  $("#mosaic").innerHTML = `<div class="tile-s intro reveal"><div><h2>${t.svc_h}</h2><p style="margin-top:8px">${t.svc_intro}</p></div>
+      <ol>${t.steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`
+    + t.svc.map(([c, h, d], i) => `<button class="tile-s reveal" data-c="${c}">
+      <img src="${img(...SVC_IMG[i])}" alt="" loading="lazy"><span class="go">${icon("i-arrow")}</span><h3>${h}</h3><p>${d}</p></button>`).join("")
+    + `<a class="tile-s favt reveal" href="#fav"><span class="go">${icon("i-arrow")}</span><h3>FAV × TEG</h3><p>${t.fav_tile}</p></a>`;
+  $("#mosaic").querySelectorAll("button.tile-s").forEach(b => b.onclick = () => { setFilter(b.dataset.c); scrollToEl($("#projects")); });
+  $("#mosaic a.tile-s").onclick = e => { e.preventDefault(); scrollToEl($("#fav")); };
+  observeReveals();
+}
+
+/* ---------------- Projects ---------------- */
+let filter = "all", showAll = false;
+const FIRST = 9;
+function renderFilters() {
+  $("#filters").innerHTML = ["all", "led", "av", "sec", "power"].map(c => {
+    const n = c === "all" ? P.length : P.filter(p => p.cat === c).length;
+    return `<button data-c="${c}" aria-pressed="${c === filter}">${c === "all" ? T[lang].all : T[lang].cat[c]}<sup>${n}</sup></button>`;
+  }).join("");
+  $("#filters").querySelectorAll("button").forEach(b => b.onclick = () => setFilter(b.dataset.c));
+}
+function setFilter(c) { filter = c; renderFilters(); renderGrid(); }
+function renderGrid() {
+  const list = P.filter(p => filter === "all" || p.cat === filter);
+  const shown = filter === "all" && !showAll ? list.slice(0, FIRST) : list;
+  $("#grid").innerHTML = shown.map(p => `<article class="card reveal" tabindex="0" data-s="${p.slug}">
+    <div class="ph"><img src="${p.images[0]}" alt="" loading="lazy"></div>
+    <div class="body"><div class="meta"><span class="tag">${T[lang].cat[p.cat]}</span><span>${T[lang].photos(p.images.length)}</span></div><h3>${title(p)}</h3></div></article>`).join("");
+  $("#moreRow").hidden = shown.length === list.length;
+  $("#more").textContent = T[lang].show_all(list.length);
+  document.querySelectorAll(".card").forEach(c => {
+    const p = P.find(x => x.slug === c.dataset.s);
+    c.onclick = () => openViewer(p, c);
+    c.onkeydown = e => { if (e.key === "Enter") openViewer(p, c); };
+  });
+  observeReveals();
+  window.ScrollTrigger && ScrollTrigger.refresh();
+}
+$("#more").onclick = () => { showAll = true; renderGrid(); };
+
+/* reveal-on-scroll: content is visible by default, the animation plays once on top */
+function observeReveals() {
+  const h = innerHeight;
+  document.querySelectorAll(".reveal:not(.in)").forEach(el => { if (el.getBoundingClientRect().top < h) el.classList.add("in"); });
+}
+addEventListener("scroll", observeReveals, { passive: true });
+addEventListener("resize", observeReveals);
+setInterval(observeReveals, 400);
+
+/* ---------------- Viewer ---------------- */
+const viewer = $("#viewer");
+let vp = null, vi = 0, lastFocus = null;
+function openViewer(p, fromEl) {
+  vp = p; vi = 0; lastFocus = fromEl;
+  $("#vTitle").textContent = title(p);
+  $("#vCat").textContent = T[lang].cat[p.cat];
+  $("#vText").textContent = p.text;
+  $("#vThumbs").innerHTML = p.images.map((s, i) => `<button data-n="${i}" aria-label="${i + 1}"><img src="${s}" alt="" loading="lazy"></button>`).join("");
+  $("#vThumbs").querySelectorAll("button").forEach(b => b.onclick = () => show(+b.dataset.n));
+  show(0);
+  viewer.classList.add("open"); document.body.style.overflow = "hidden"; lenis && lenis.stop();
+  if (!reduce && fromEl) {
+    const r = fromEl.getBoundingClientRect();
+    const ins = `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 14px)`;
+    gsap.fromTo(viewer, { clipPath: ins }, { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: .7, ease: "expo.inOut" });
+    gsap.fromTo(".v-top, .v-text, .v-thumbs", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .5, delay: .45, stagger: .06 });
+  }
+  $("#vClose").focus();
+}
+function show(n) {
+  vi = (n + vp.images.length) % vp.images.length;
+  const im = $("#vImg");
+  im.src = vp.images[vi];
+  if (!reduce) gsap.fromTo(im, { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power2.out" });
+  $("#vCounter").textContent = `${vi + 1} / ${vp.images.length}`;
+  $("#vThumbs").querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-current", i === vi));
+  $("#vThumbs").children[vi]?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+}
+function closeViewer() {
+  const done = () => { viewer.classList.remove("open"); viewer.style.clipPath = ""; document.body.style.overflow = ""; lenis && lenis.start(); lastFocus && lastFocus.focus({ preventScroll: true }); };
+  if (reduce) return done();
+  gsap.to(viewer, { opacity: 0, duration: .3, onComplete: () => { viewer.style.opacity = ""; done(); } });
+}
+$("#vClose").onclick = closeViewer;
+$("#vPrev").onclick = () => show(vi - 1);
+$("#vNext").onclick = () => show(vi + 1);
+addEventListener("keydown", e => {
+  if (!viewer.classList.contains("open")) return;
+  if (e.key === "Escape") closeViewer();
+  if (e.key === "ArrowRight") show(vi + 1);
+  if (e.key === "ArrowLeft") show(vi - 1);
+});
+
+/* ---------------- Scroll & motion ---------------- */
+gsap.registerPlugin(ScrollTrigger);
+let lenis = null;
+if (!reduce && window.Lenis) {
+  lenis = new Lenis({ lerp: 0.1 });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+const hdr = $("#hdr");
+function scrollToEl(el) { const off = -hdr.offsetHeight + 1; lenis ? lenis.scrollTo(el, { offset: off }) : scrollTo({ top: el.getBoundingClientRect().top + scrollY + off, behavior: "smooth" }); }
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+  const id = a.getAttribute("href"); if (id.length < 2) return;
+  const el = document.querySelector(id); if (!el) return;
+  e.preventDefault(); $("#nav").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded", "false"); scrollToEl(el);
+}));
+$("#menuBtn").onclick = () => {
+  document.documentElement.style.setProperty("--hdr-h", hdr.getBoundingClientRect().bottom + "px");
+  const o = $("#nav").classList.toggle("open"); $("#menuBtn").setAttribute("aria-expanded", o);
+};
+addEventListener("scroll", () => hdr.classList.toggle("scrolled", scrollY > 50), { passive: true });
+
+/* underline the menu item for the section in view */
+["about", "services", "projects", "contact"].forEach(id => ScrollTrigger.create({
+  trigger: "#" + id, start: () => "top " + (hdr.offsetHeight + 10), end: () => "bottom " + (hdr.offsetHeight + 10),
+  onToggle: st => document.querySelectorAll(`.nav a[href="#${id}"]:not(.btn)`).forEach(a => a.classList.toggle("cur", st.isActive)),
+}));
+
+/* key numbers count up the first time they are seen */
+document.querySelectorAll("[data-count]").forEach(el => {
+  if (reduce) return;
+  const end = +el.dataset.count, o = { v: 0 };
+  ScrollTrigger.create({ trigger: el, start: "top 95%", once: true, onEnter: () =>
+    gsap.to(o, { v: end, duration: 1.8, ease: "power2.out", onUpdate: () => el.textContent = Math.round(o.v) + "+" }) });
+});
+
+/* the one orchestrated entrance */
+function intro() {
+  if (reduce) return;
+  gsap.from(".hero h1 .ln span", { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: .12, delay: .2 });
+  gsap.from(".proof, .hero .sub, .hero .btns", { opacity: 0, y: 14, duration: .8, delay: .5, stagger: .1 });
+  gsap.from(".stats", { opacity: 0, duration: .9, delay: .8, ease: "power2.out", clearProps: "opacity" });
+}
+
+/* FAV screen loops its sample ads */
+(function favLoop() {
+  const slides = document.querySelectorAll("#screen .slide"); let n = 0;
+  if (reduce) return;
+  const step = () => {
+    slides.forEach((s, i) => s.classList.toggle("on", i === n));
+    gsap.fromTo("#tick", { width: "0%" }, { width: "100%", duration: 3, ease: "none", onComplete: () => { n = (n + 1) % slides.length; step(); } });
+  };
+  step();
+})();
+
+applyLang();
+hero.start();
+intro();
+observeReveals();
+addEventListener("load", () => { ScrollTrigger.refresh(); observeReveals(); });
+document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+</script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fredi Electronics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..900;1,62..125,300..900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --panel: #06080b;      /* switched-off LED panel */
+  --alu: #e6e7e3;        /* brushed aluminium, page ground */
+  --alu-2: #d9dbd6;
+  --ink: #0e1217;
+  --steel: #59606a;
+  --rule: #c5c8c2;
+  --r: #ff3b30; --g: #19d46b; --b: #2f6bff;   /* RGB sub-pixels, used only as the brand device */
+  --fav: #ffc400;
+  --wa: #25d366;
+  --display: "Archivo", sans-serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --gut: clamp(16px, 4vw, 56px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--alu); color: var(--ink); font: 400 16px/1.6 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--b); outline-offset: 3px; }
+.d { font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 700; letter-spacing: -0.02em; line-height: .95; }
+.pad { padding-left: var(--gut); padding-right: var(--gut); }
+
+/* RGB sub-pixel mark: three tiny diodes, the one brand ornament */
+.px { display: inline-flex; gap: 3px; vertical-align: middle; }
+.px i { width: 5px; height: 11px; border-radius: 1px; }
+.px i:nth-child(1) { background: var(--r); } .px i:nth-child(2) { background: var(--g); } .px i:nth-child(3) { background: var(--b); }
+
+/* ---------- Header ---------- */
+.hdr { position: fixed; inset: 0 0 auto 0; z-index: 60; display: flex; align-items: center; justify-content: space-between; height: 76px; color: #fff; transition: color .4s, background-color .4s; }
+.hdr.light { color: var(--ink); background: rgba(230,231,227,.86); backdrop-filter: blur(12px); }
+.hdr .logo img { height: 28px; filter: invert(1); transition: filter .4s; }
+.hdr.light .logo img { filter: none; }
+.nav { display: flex; gap: clamp(18px, 2.4vw, 36px); font-size: 14px; font-weight: 500; }
+.nav a { position: relative; padding: 6px 0; }
+.nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: 0; height: 2px; background: currentColor; transition: right .35s cubic-bezier(.2,.8,.2,1); }
+.nav a:hover::after { right: 0; }
+.nav .fav-l { color: var(--fav); }
+.hdr.light .nav .fav-l { color: var(--ink); }
+.hdr.light .nav .fav-l::before { content: ""; position: absolute; left: -10px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--fav); }
+.lang { display: flex; font-size: 12px; font-weight: 600; border: 1px solid currentColor; border-radius: 3px; overflow: hidden; }
+.lang button { padding: 5px 9px; opacity: .55; }
+.lang button[aria-pressed="true"] { opacity: 1; background: currentColor; }
+.lang button[aria-pressed="true"] span { color: var(--panel); }
+.hdr.light .lang button[aria-pressed="true"] span { color: var(--alu); }
+.menu-btn { display: none; font-weight: 600; font-size: 14px; }
+
+/* ---------- Hero: cinematic slideshow ---------- */
+.hero { position: relative; height: 100svh; min-height: 560px; background: var(--panel); color: #fff; overflow: hidden; }
+.slides { position: absolute; inset: 0; }
+.slides img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; clip-path: inset(0 100% 0 0); transform: scale(1.08); }
+.slides img.prev { clip-path: inset(0 0 0 0); transform: scale(1); z-index: 1; }
+.slides img.on { clip-path: inset(0 0 0 0); transform: scale(1); z-index: 2; transition: clip-path 1.4s cubic-bezier(.75,0,.2,1), transform 9s cubic-bezier(.25,.6,.3,1); }
+.slides img.first { transition: transform 9s cubic-bezier(.25,.6,.3,1); }
+.scan { position: absolute; top: 0; bottom: 0; left: 0; z-index: 3; width: 9px; display: flex; gap: 1px; opacity: 0; pointer-events: none; filter: drop-shadow(0 0 14px rgba(255,255,255,.7)); }
+.scan i { flex: 1; } .scan i:nth-child(1) { background: var(--r); } .scan i:nth-child(2) { background: var(--g); } .scan i:nth-child(3) { background: var(--b); }
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(6,8,11,.5) 0, rgba(6,8,11,0) 24%, rgba(6,8,11,0) 45%, rgba(6,8,11,.85) 100%); }
+.hero-copy { position: absolute; left: var(--gut); right: var(--gut); bottom: clamp(28px, 6vh, 64px); z-index: 2; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 32px; }
+.hero h1 { font-size: clamp(44px, 7.2vw, 120px); max-width: 11ch; }
+.hero h1 .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+.hero h1 .ln span { display: block; }
+.hero .sub { margin-top: 22px; max-width: 46ch; color: #d3d7dc; font-size: 17px; }
+.hero .btns { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+.btn.light { background: #fff; color: var(--ink); }
+.btn.line { border: 1px solid rgba(255,255,255,.55); color: #fff; }
+.now { text-align: right; min-width: 260px; margin-bottom: 72px; }
+.now .count { font: 600 13px/1 var(--body); color: #aab0b8; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+.now .bars { display: flex; gap: 4px; }
+.now .bars button { width: 26px; height: 16px; position: relative; }
+.now .bars button::before, .now .bars b { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 3px; }
+.now .bars button::before { background: rgba(255,255,255,.25); }
+.now .bars b { background: #fff; transform-origin: left; transform: scaleX(0); }
+.now .title { font: 600 20px/1.25 var(--body); margin: 12px 0 10px auto; max-width: 26ch; }
+.now a { font-size: 14px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,.5); padding-bottom: 2px; }
+
+/* ---------- Dark ("screen on") sections ---------- */
+.dark { background: var(--panel); color: #fff; --rule: #232831; --steel: #8f96a0; --alu-2: #12161c; }
+.dark .work-bar { border-top-color: #fff; }
+.dark .filters button:hover { border-color: #fff; color: #fff; }
+.dark .filters button[aria-pressed="true"] { background: #fff; color: var(--ink); border-color: #fff; }
+.dark .more { border-color: #fff; }
+.dark .more:hover { background: #fff; color: var(--ink); }
+.dark .btn.ink { background: #fff; color: var(--ink); }
+.dark form.cf input, .dark form.cf textarea { border-bottom-color: #59606a; color: #fff; }
+.dark form.cf input:focus, .dark form.cf textarea:focus { border-bottom-color: #fff; }
+.dark .foot img { filter: invert(1); }
+.hdr.solid { background: rgba(6,8,11,.8); backdrop-filter: blur(12px); }
+.hdr { transition: color .4s, background-color .4s, transform .5s cubic-bezier(.2,.8,.2,1); }
+.hdr.hide { transform: translateY(-100%); }
+
+/* ---------- Key facts strip ---------- */
+.strip { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--rule); }
+.strip div { padding: 30px 0; }
+.strip div + div { padding-left: 24px; border-left: 1px solid var(--rule); }
+.strip b { display: block; font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 700; font-size: clamp(26px, 2.8vw, 42px); line-height: 1; }
+.strip span { display: block; color: var(--steel); font-size: 14px; margin-top: 8px; }
+
+/* ---------- Section scaffolding ---------- */
+section { position: relative; }
+.sec-top { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-top: clamp(80px, 12vw, 160px); padding-bottom: 36px; }
+.h2 { font-size: clamp(48px, 9vw, 150px); }
+.lede { max-width: 44ch; color: var(--steel); font-size: 17px; }
+
+/* ---------- Projects grid ---------- */
+.work { padding-bottom: clamp(80px, 10vw, 140px); }
+.work-bar { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; padding-top: 20px; border-top: 1px solid var(--ink); }
+.work-bar h3 { font: 600 18px/1.2 var(--body); }
+.filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.filters button { padding: 8px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: 14px; color: var(--steel); transition: background-color .25s, color .25s, border-color .25s; }
+.filters button:hover { border-color: var(--ink); color: var(--ink); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--alu); border-color: var(--ink); }
+.filters sup { font-size: 10px; margin-left: 3px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px 24px; }
+.tile { cursor: pointer; }
+.tile .ph { aspect-ratio: 4/3; overflow: hidden; background: var(--alu-2); }
+.tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+.tile:hover img, .tile:focus-visible img { transform: scale(1.03); }
+.tile h3 { font: 600 19px/1.3 var(--body); margin-top: 16px; }
+.tile p { color: var(--steel); font-size: 14px; margin-top: 4px; display: flex; gap: 14px; }
+.more { display: block; margin: 56px auto 0; padding: 14px 26px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 600; font-size: 15px; transition: background-color .25s, color .25s; }
+.more:hover { background: var(--ink); color: var(--alu); }
+
+/* gentle entrance as things scroll into view */
+html.motion .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform 1s cubic-bezier(.2,.8,.2,1); }
+html.motion .reveal.in { opacity: 1; transform: none; }
+html.motion .tile.reveal { transform: none; }
+html.motion .tile.reveal .ph { clip-path: inset(100% 0 0 0); transition: clip-path 1.2s cubic-bezier(.7,0,.2,1); transition-delay: inherit; }
+html.motion .tile.reveal img { transform: scale(1.18); transition: transform 1.6s cubic-bezier(.2,.8,.2,1); transition-delay: inherit; }
+html.motion .tile.reveal.in .ph { clip-path: inset(0 0 0 0); }
+html.motion .tile.reveal.in img { transform: scale(1); }
+html.motion .tile.reveal.in:hover img { transform: scale(1.03); transition-delay: 0s; }
+
+/* ---------- Viewer ---------- */
+.viewer { position: fixed; inset: 0; z-index: 80; background: var(--panel); color: #fff; display: none; grid-template-rows: auto 1fr auto; }
+.viewer.open { display: grid; }
+.v-top { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px var(--gut); }
+.v-top h3 { font: 600 clamp(18px, 2vw, 24px)/1.2 var(--body); }
+.v-top .cat { color: #8d949e; font-size: 14px; margin-top: 2px; }
+.v-close { font-size: 14px; font-weight: 600; padding: 10px 16px; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; }
+.v-stage { position: relative; display: grid; grid-template-columns: 1fr minmax(260px, 340px); gap: 32px; padding: 0 var(--gut); min-height: 0; }
+.v-img { position: relative; min-height: 0; display: grid; place-items: center; }
+.v-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.v-nav { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.v-nav button { pointer-events: auto; width: 52px; height: 52px; border-radius: 50%; background: rgba(6,8,11,.6); border: 1px solid rgba(255,255,255,.25); font-size: 20px; }
+.v-text { overflow: auto; color: #c3c8cf; font-size: 15px; padding-right: 6px; }
+.v-text .counter { font: 700 15px/1 var(--body); color: #fff; margin-bottom: 16px; }
+.v-thumbs { display: flex; gap: 8px; padding: 16px var(--gut) 20px; overflow-x: auto; }
+.v-thumbs button { flex: none; width: 92px; height: 62px; opacity: .45; transition: opacity .2s; }
+.v-thumbs button[aria-current="true"] { opacity: 1; outline: 2px solid #fff; outline-offset: 2px; }
+.v-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- About ---------- */
+.about { background: var(--alu); color: var(--ink); }
+.about-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 6vw, 96px); padding-bottom: clamp(80px, 10vw, 140px); }
+.about .big { font: 500 clamp(24px, 2.6vw, 38px)/1.3 var(--body); max-width: 30ch; letter-spacing: -0.01em; }
+.about .big + p { margin-top: 28px; color: var(--steel); max-width: 54ch; }
+.about figure { position: relative; }
+.about figure img { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; margin-top: 40px; border-top: 1px solid #262b33; }
+.facts div { padding: 20px 0; border-bottom: 1px solid #262b33; }
+.facts div:nth-child(odd) { padding-right: 16px; }
+.facts dt { font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 700; font-size: clamp(32px, 3.4vw, 52px); line-height: 1; }
+.facts dd { color: #8d949e; font-size: 14px; margin-top: 6px; }
+.trusted { margin-top: 40px; color: var(--steel); font-size: 15px; max-width: 60ch; }
+.trusted b { color: var(--ink); font-weight: 500; }
+
+/* ---------- Services ---------- */
+.svc-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: clamp(32px, 6vw, 96px); padding-bottom: clamp(80px, 10vw, 140px); }
+.svc-side { position: sticky; top: 110px; align-self: start; }
+.svc-side ol { list-style: none; margin-top: 40px; counter-reset: s; }
+.svc-side li { counter-increment: s; display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-weight: 500; }
+.svc-side li::before { content: counter(s); font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 800; color: var(--steel); width: 18px; }
+.svc-list { list-style: none; border-top: 1px solid var(--ink); }
+.svc-list li { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; padding: 28px 0; border-bottom: 1px solid var(--rule); }
+.svc-list h3 { font-family: var(--display); font-stretch: 112%; font-weight: 650; font-size: clamp(24px, 2.4vw, 34px); line-height: 1.1; }
+.svc-list p { grid-column: 1; color: var(--steel); max-width: 52ch; }
+.svc-list button { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: 14px; font-weight: 600; padding: 10px 16px; border: 1px solid var(--ink); border-radius: 999px; transition: background-color .25s, color .25s; white-space: nowrap; }
+.svc-list button:hover { background: var(--ink); color: var(--alu); }
+
+/* ---------- FAV × TEG ---------- */
+.fav { background: var(--fav); color: var(--ink); overflow: hidden; }
+.fav-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: center; padding-top: clamp(80px, 10vw, 140px); padding-bottom: clamp(80px, 10vw, 140px); }
+.fav .h2 { font-size: clamp(56px, 10vw, 170px); }
+.fav .h2 small { display: block; font-size: .32em; font-style: normal; font-stretch: 100%; font-weight: 600; letter-spacing: 0; margin-top: 18px; }
+.fav p { max-width: 48ch; margin-top: 28px; font-size: 17px; }
+.fav dl { display: flex; gap: clamp(20px, 4vw, 56px); margin-top: 36px; }
+.fav dt { font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 800; font-size: clamp(36px, 4vw, 60px); line-height: 1; }
+.fav dd { font-size: 14px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; font-weight: 600; font-size: 15px; transition: transform .25s; }
+.btn:hover { transform: translateY(-2px); }
+.btn.ink { background: var(--ink); color: #fff; }
+.fav .btn { margin-top: 40px; }
+/* a portrait LED screen playing sample ads */
+.screen { justify-self: center; width: min(100%, 360px); aspect-ratio: 9/16; background: var(--panel); border: 10px solid #15181d; border-radius: 6px; position: relative; overflow: hidden; box-shadow: 0 40px 80px rgba(80,50,0,.35); }
+.screen .slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 28px; opacity: 0; transition: opacity .6s; }
+.screen .slide.on { opacity: 1; }
+.screen .slide strong { font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 800; font-size: 42px; line-height: .95; color: #fff; }
+.screen .slide span { color: rgba(255,255,255,.8); margin-top: 10px; font-size: 14px; }
+.screen .s1 { background: radial-gradient(120% 80% at 30% 20%, #ff4d2e, #8a0f3b 60%, #2a0620); }
+.screen .s2 { background: radial-gradient(120% 80% at 70% 30%, #34d0ff, #1b3fd8 55%, #0a1240); }
+.screen .s3 { background: radial-gradient(120% 80% at 40% 30%, #ffd84d, #ff8a00 50%, #5a2300); }
+.screen::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 0 1.1px, rgba(6,8,11,.85) 1.6px) 0 0/5px 5px; pointer-events: none; }
+.screen .tick { position: absolute; left: 0; bottom: 0; height: 4px; background: #fff; z-index: 2; width: 0; }
+
+/* ---------- Contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 6vw, 96px); padding-bottom: clamp(80px, 10vw, 140px); }
+.contact dl { display: grid; grid-template-columns: 120px 1fr; gap: 14px 20px; margin-top: 40px; font-size: 16px; }
+.contact dt { color: var(--steel); }
+.contact .btn.wa-b { background: var(--wa); color: #06300f; margin-top: 36px; }
+form.cf { display: grid; gap: 14px; align-content: start; }
+form.cf label { font-size: 14px; color: var(--steel); display: grid; gap: 6px; }
+form.cf input, form.cf textarea { font: inherit; padding: 14px 0; border: 0; border-bottom: 1px solid var(--ink); background: transparent; color: var(--ink); border-radius: 0; }
+form.cf input:focus, form.cf textarea:focus { outline: none; border-bottom-width: 2px; }
+form.cf textarea { min-height: 110px; resize: vertical; }
+form.cf .btn { justify-self: start; margin-top: 10px; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; border-top: 1px solid var(--rule); color: var(--steel); font-size: 14px; }
+.foot img { height: 20px; }
+
+/* ---------- WhatsApp ---------- */
+.wa { position: fixed; right: 20px; bottom: 20px; z-index: 70; display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 20px 0 16px; border-radius: 999px; background: var(--wa); color: #06300f; font-weight: 600; font-size: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: transform .25s; }
+.wa:hover { transform: translateY(-3px); }
+.wa svg { width: 24px; height: 24px; }
+
+/* ---------- Mobile ---------- */
+@media (max-width: 900px) {
+  .nav { display: none; position: fixed; inset: 0; background: var(--panel); color: #fff; flex-direction: column; justify-content: center; padding: 0 var(--gut); gap: 8px; z-index: -1; }
+  .nav a { font-family: var(--display); font-stretch: 125%; font-style: italic; font-weight: 700; font-size: 38px; }
+  .nav.open { display: flex; }
+  .menu-btn { display: block; }
+  .hdr .lang { margin-left: auto; margin-right: 16px; }
+  .hero-copy { grid-template-columns: 1fr; }
+  .now { text-align: left; min-width: 0; }
+  .now .count { justify-content: flex-start; }
+  .now .title { margin-left: 0; }
+  .strip { grid-template-columns: 1fr 1fr; }
+  .strip div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .strip div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+  .about-grid, .svc-grid, .fav-grid, .contact-grid { grid-template-columns: 1fr; }
+  .svc-side { position: static; }
+  .svc-list li { grid-template-columns: 1fr; }
+  .svc-list button { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 8px; }
+  .v-stage { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .v-text { max-height: 22vh; }
+  .wa .t { display: none; }
+  .wa { width: 54px; padding: 0; justify-content: center; }
+}
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) {
+  html:not(.motion) *, html:not(.motion) *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="hdr pad" id="hdr">
+  <a class="logo" href="#top" aria-label="Fredi Electronics"><img src="../backup/images/2024/08/logodesignfredi-scaled.png" alt="Fredi Electronics"></a>
+  <nav class="nav" id="nav">
+    <a href="#about" data-i="nav_about"></a>
+    <a href="#services" data-i="nav_services"></a>
+    <a href="#fav" class="fav-l">FAV × TEG</a>
+    <a href="#projects" data-i="nav_projects"></a>
+    <a href="#contact" data-i="nav_contact"></a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language">
+    <button data-lang="sq" aria-pressed="true"><span>SQ</span></button>
+    <button data-lang="en" aria-pressed="false"><span>EN</span></button>
+  </div>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" data-i="menu"></button>
+</header>
+
+<main id="top">
+  <section class="hero" data-theme="dark" aria-label="Fredi Electronics">
+    <div class="slides" id="slides"></div>
+    <div class="scan" id="scan"><i></i><i></i><i></i></div>
+    <div class="hero-copy">
+      <div>
+        <h1 class="d"><span class="ln"><span data-i="h1a"></span></span><span class="ln"><span data-i="h1b"></span></span></h1>
+        <p class="sub" data-i="hero_sub"></p>
+        <div class="btns">
+          <a class="btn light" href="#projects" data-i="see_projects"></a>
+          <a class="btn line" href="#contact" data-i="nav_contact"></a>
+        </div>
+      </div>
+      <div class="now">
+        <div class="count"><span id="nowNo">01 / 06</span><span class="bars" id="bars"></span></div>
+        <p class="title" id="nowTitle"></p>
+        <a href="#" id="nowOpen" data-i="open_project"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip pad dark" data-theme="dark">
+    <div><b>1991</b><span data-i="f_year"></span></div>
+    <div><b data-count="700">700+</b><span data-i="f_proj"></span></div>
+    <div><b data-count="30">30+</b><span data-i="f_brands"></span></div>
+    <div><b data-i="f_where_v"></b><span data-i="f_where"></span></div>
+  </div>
+
+  <section id="projects" class="dark" data-theme="dark">
+    <div class="sec-top pad">
+      <h2 class="h2 d" data-i="projects_h"></h2>
+      <p class="lede" data-i="projects_lede"></p>
+    </div>
+    <div class="work pad">
+      <div class="work-bar">
+        <h3 id="idxCount"></h3>
+        <div class="filters" id="filters" role="group"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <button class="more" id="more"></button>
+    </div>
+  </section>
+
+  <section class="about" id="about" data-theme="light">
+    <div class="sec-top pad"><h2 class="h2 d" data-i="about_h"></h2></div>
+    <div class="about-grid pad">
+      <div>
+        <p class="big" data-i="about_big"></p>
+        <p data-i="about_p"></p>
+        <p class="trusted"><span data-i="trusted"></span> <b>KQZ, AKEP, AMA, Ministria e Arsimit, Gjykata e Apelit, Bashkia Tiranë, Bashkia Durrës, Universiteti i Vlorës, Politekniku, Forcat Detare</b></p>
+      </div>
+      <figure><img src="../backup/images/2024/12/WhatsApp-Image-2024-12-06-at-14.22.59-5.jpeg" alt="" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section id="services" data-theme="light">
+    <div class="sec-top pad"><h2 class="h2 d" data-i="svc_h"></h2></div>
+    <div class="svc-grid pad">
+      <div class="svc-side">
+        <p class="lede" data-i="svc_lede"></p>
+        <ol>
+          <li data-i="st1"></li><li data-i="st2"></li><li data-i="st3"></li><li data-i="st4"></li><li data-i="st5"></li>
+        </ol>
+      </div>
+      <ul class="svc-list" id="svcList"></ul>
+    </div>
+  </section>
+
+  <section class="fav" id="fav" data-theme="light">
+    <div class="fav-grid pad">
+      <div>
+        <h2 class="h2 d">FAV × TEG<small data-i="fav_small"></small></h2>
+        <p data-i="fav_p"></p>
+        <dl>
+          <div><dt>13</dt><dd data-i="fav_s1"></dd></div>
+          <div><dt>10.5M+</dt><dd data-i="fav_s2"></dd></div>
+          <div><dt>12h+</dt><dd data-i="fav_s3"></dd></div>
+        </dl>
+        <a class="btn ink" href="https://fav.al/" target="_blank" rel="noopener" data-i="fav_btn"></a>
+      </div>
+      <div class="screen" id="screen" aria-hidden="true">
+        <div class="slide s1 on"><strong data-i="ad1"></strong><span>FAV · TEG</span></div>
+        <div class="slide s2"><strong data-i="ad2"></strong><span data-i="ad2s"></span></div>
+        <div class="slide s3"><strong data-i="ad3"></strong><span>fav.al</span></div>
+        <div class="tick" id="tick"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact dark" data-theme="dark">
+    <div class="sec-top pad"><h2 class="h2 d" data-i="contact_h"></h2></div>
+    <div class="contact-grid pad">
+      <div>
+        <p class="lede" data-i="contact_lede"></p>
+        <dl>
+          <dt data-i="c_addr"></dt><dd>Rr. Kavajës, P.207, Sh.2, Tiranë 1001</dd>
+          <dt data-i="c_phone"></dt><dd><a href="tel:+355696752032">+355 69 675 2032</a></dd>
+          <dt>Email</dt><dd><a href="mailto:fredielectronics@gmail.com">fredielectronics@gmail.com</a></dd>
+          <dt>Instagram</dt><dd><a href="https://instagram.com/fredielectronics" target="_blank" rel="noopener">@fredielectronics</a></dd>
+          <dt data-i="c_hours"></dt><dd data-i="c_hours_v"></dd>
+        </dl>
+        <a class="btn wa-b" href="https://wa.me/355696752032" target="_blank" rel="noopener" data-i="wa_long"></a>
+      </div>
+      <form class="cf" onsubmit="return false">
+        <label><span data-i="fm_name"></span><input autocomplete="name"></label>
+        <label><span data-i="fm_contact"></span><input autocomplete="email"></label>
+        <label><span data-i="fm_msg"></span><textarea></textarea></label>
+        <button class="btn ink" data-i="fm_send"></button>
+      </form>
+    </div>
+    <footer class="foot pad">
+      <img src="../backup/images/2024/08/logodesignfredi-scaled.png" alt="Fredi Electronics">
+      <span>© 2026 Fredi Electronics sh.p.k.</span>
+    </footer>
+  </section>
+</main>
+
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vTitle">
+  <div class="v-top">
+    <div><h3 id="vTitle"></h3><div class="cat" id="vCat"></div></div>
+    <button class="v-close" id="vClose" data-i="close"></button>
+  </div>
+  <div class="v-stage">
+    <div class="v-img"><img id="vImg" alt=""><div class="v-nav"><button id="vPrev" aria-label="Previous">‹</button><button id="vNext" aria-label="Next">›</button></div></div>
+    <div class="v-text"><p class="counter" id="vCounter"></p><p id="vText"></p></div>
+  </div>
+  <div class="v-thumbs" id="vThumbs"></div>
+</div>
+
+<a class="wa" href="https://wa.me/355696752032" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3Z"/></svg>
+  <span class="t" data-i="wa_short"></span>
+</a>
+
+<script src="projects.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+const T = {
+  sq: {
+    nav_about: "Rreth nesh", nav_services: "Shërbimet tona", nav_projects: "Projekte", nav_contact: "Kontakt", menu: "Menu",
+    h1a: "Ju sillni idenë,", h1b: "ne e realizojmë.",
+    hero_sub: "Ekrane LED, audio-video, konferencë, siguri dhe energji. Projektojmë, instalojmë dhe mirëmbajmë që nga 1991.",
+    open_project: "Hap projektin",
+    projects_h: "Projekte", projects_lede: "Një përzgjedhje nga mbi 700 instalime në Shqipëri dhe Kosovë – nga sallat e këshillave bashkiake te ekranet LED në sheshe.",
+    count: n => `${n} projekte`, all: "Të gjitha", photos: n => `${n} foto`,
+    cat: { led: "Ekrane LED", av: "Audio & Konferencë", sec: "Siguri & Akses", power: "Energji & UPS" },
+    about_h: "Rreth nesh",
+    about_big: "Filluam në 1991 si distributor i markave profesionale elektronike. Sot montojmë vetë panelet tona LED dhe dorëzojmë sisteme të plota, gati për punë.",
+    about_p: "Fredi Electronics është integrues sistemesh për institucione, biznese dhe hapësira publike. Projektojmë zgjidhjen, furnizojmë pajisjet nga mbi 30 marka globale – me Ecler si partner ekskluziv – i instalojmë dhe qëndrojmë pranë jush edhe pas dorëzimit.",
+    f_year: "viti i themelimit", f_proj: "projekte të realizuara", f_models: "modele produktesh të shpërndara", f_brands: "marka partnere globale",
+    trusted: "Kemi punuar për:",
+    svc_h: "Shërbimet tona", svc_lede: "Një partner për të gjithë projektin, nga ideja te mirëmbajtja.",
+    st1: "Konceptim", st2: "Furnizim", st3: "Instalim", st4: "Integrim", st5: "Mirëmbajtje",
+    svc: [
+      ["led", "Ekrane LED & video wall", "Panele LED të montuara nga ne, në çdo madhësi dhe konfigurim, për brenda dhe jashtë."],
+      ["av", "Audio & konferencë", "Sisteme konference, audio PA dhe salla mbledhjesh për institucione dhe biznese."],
+      ["sec", "Siguri & kontroll aksesi", "Kamera, kamera termike, alarme, EVAC, tripode dhe barriera kalimi."],
+      ["av", "Sisteme të integruara", "Parkim, regjistrim i orëve të punës, video-interfon dhe smart home."],
+      ["av", "Ndriçim skene", "Ndriçim LED, mikserë drite, kokat lëvizëse dhe efekte speciale."],
+      ["power", "Energji & UPS", "UPS deri në 80 kVA, invertera dhe furnizim i pandërprerë."],
+    ],
+    see_work: n => `Shiko ${n} projekte`,
+    fav_small: "Rrjeti i reklamimit digjital në TEG",
+    fav_p: "FAV është rrjeti premium i ekraneve LED në TEG, i ndërtuar dhe i operuar nga Fredi Electronics. Me një fushatë të vetme, marka juaj shfaqet në të gjithë rrjetin, në çdo kat.",
+    fav_s1: "ekrane LED në 3 kate", fav_s2: "vizita në vit", fav_s3: "ekspozim çdo ditë", fav_btn: "Vizitoni fav.al",
+    ad1: "Marka juaj këtu.", ad2: "15 sekonda.", ad2s: "13 ekrane njëherësh", ad3: "Rezervoni hapësirën.",
+    contact_h: "Kontakt", contact_lede: "Na tregoni për hapësirën dhe idenë tuaj. Ju përgjigjemi brenda një dite pune.",
+    c_addr: "Adresa", c_phone: "Telefon", c_hours: "Orari", c_hours_v: "Do të konfirmohet",
+    wa_long: "Shkruani në WhatsApp", wa_short: "Na shkruani",
+    fm_name: "Emri", fm_contact: "Email ose telefon", fm_msg: "Mesazhi", fm_send: "Dërgo mesazhin", close: "Mbyll", see_projects: "Shikoni projektet", show_all: n => `Shikoni të gjitha (${n})`, f_where: "ku punojmë", f_where_v: "AL & XK",
+  },
+  en: {
+    nav_about: "About us", nav_services: "Our services", nav_projects: "Projects", nav_contact: "Contact", menu: "Menu",
+    h1a: "You bring the idea,", h1b: "we build it.",
+    hero_sub: "LED displays, audio-video, conference, security and power. Designed, installed and maintained since 1991.",
+    open_project: "Open project",
+    projects_h: "Projects", projects_lede: "A selection from more than 700 installations across Albania and Kosovo – from council chambers to LED screens in city squares.",
+    count: n => `${n} projects`, all: "All", photos: n => `${n} photos`,
+    cat: { led: "LED displays", av: "Audio & Conference", sec: "Security & Access", power: "Power & UPS" },
+    about_h: "About us",
+    about_big: "We started in 1991 as a distributor of professional electronics brands. Today we assemble our own LED panels and deliver complete systems, ready to run.",
+    about_p: "Fredi Electronics is a systems integrator for institutions, businesses and public spaces. We design the solution, supply equipment from 30+ global brands – with Ecler as exclusive partner – install it, and stay with you after handover.",
+    f_year: "founded", f_proj: "completed projects", f_models: "product models distributed", f_brands: "global brand partners",
+    trusted: "We have worked for:",
+    svc_h: "Our services", svc_lede: "One partner for the whole project, from idea to maintenance.",
+    st1: "Design", st2: "Supply", st3: "Installation", st4: "Integration", st5: "Maintenance",
+    svc: [
+      ["led", "LED displays & video walls", "LED panels we assemble ourselves, in any size and configuration, indoor and outdoor."],
+      ["av", "Audio & conference", "Conference systems, PA audio and meeting rooms for institutions and businesses."],
+      ["sec", "Security & access control", "CCTV, thermal cameras, alarms, EVAC, tripod turnstiles and barriers."],
+      ["av", "Integrated systems", "Parking, time attendance, video intercom and smart home."],
+      ["av", "Stage lighting", "LED lighting, lighting desks, moving heads and special effects."],
+      ["power", "Power & UPS", "UPS up to 80 kVA, inverters and uninterrupted power."],
+    ],
+    see_work: n => `See ${n} projects`,
+    fav_small: "The digital advertising network at TEG",
+    fav_p: "FAV is the premium LED screen network inside TEG, built and operated by Fredi Electronics. One campaign puts your brand on the whole network, on every floor.",
+    fav_s1: "LED screens on 3 floors", fav_s2: "visits per year", fav_s3: "exposure every day", fav_btn: "Visit fav.al",
+    ad1: "Your brand here.", ad2: "15 seconds.", ad2s: "13 screens at once", ad3: "Book your slot.",
+    contact_h: "Contact", contact_lede: "Tell us about your space and your idea. We reply within one working day.",
+    c_addr: "Address", c_phone: "Phone", c_hours: "Hours", c_hours_v: "To be confirmed",
+    wa_long: "Message us on WhatsApp", wa_short: "Chat with us",
+    fm_name: "Name", fm_contact: "Email or phone", fm_msg: "Message", fm_send: "Send message", close: "Close", see_projects: "See our projects", show_all: n => `Show all (${n})`, f_where: "where we work", f_where_v: "AL & XK",
+  },
+};
+let lang = "sq";
+const P = window.PROJECTS;
+const FEATURED = ["bashkiamat", "keshilli-bashkiak-durres", "video-wall-tek-akep", "led-wall-sarande", "restaurimi-total-i-kqz", "led-wall-world-vision"];
+const featured = FEATURED.map(f => P.find(p => p.slug.includes(f))).filter(Boolean);
+// ?motion forces full animation even when the OS asks for reduced motion (handy for previewing)
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches && !new URLSearchParams(location.search).has("motion");
+if (!reduce) document.documentElement.classList.add("motion");
+const $ = s => document.querySelector(s);
+const title = p => p[lang];
+
+/* ---------------- i18n ---------------- */
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i]").forEach(el => { const v = T[lang][el.dataset.i]; if (typeof v === "string") el.textContent = v; });
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  renderFilters(); renderGrid(); renderServices(); hero.caption();
+}
+document.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { lang = b.dataset.lang; applyLang(); });
+
+/* ---------------- Hero slideshow ---------------- */
+const hero = (() => {
+  const HOLD = 6500;
+  let idx = 0, t0 = 0;
+  function go(n, first) {
+    const prev = idx;
+    idx = (n + featured.length) % featured.length; t0 = performance.now();
+    document.querySelectorAll("#slides img").forEach((im, i) => {
+      im.classList.toggle("first", !!first && i === idx);
+      im.classList.toggle("prev", !first && i === prev && i !== idx);
+      im.classList.toggle("on", i === idx);
+    });
+    if (!first && !reduce) gsap.fromTo("#scan", { left: "0%", opacity: 1 }, { left: "100%", duration: 1.4, ease: "power3.inOut", onComplete: () => gsap.set("#scan", { opacity: 0 }) });
+    caption();
+  }
+  function caption() {
+    const p = featured[idx]; if (!p) return;
+    $("#nowNo").textContent = `${String(idx + 1).padStart(2, "0")} / ${String(featured.length).padStart(2, "0")}`;
+    $("#nowTitle").textContent = title(p);
+  }
+  function tick(now) {
+    const p = Math.min(1, (now - t0) / HOLD);
+    document.querySelectorAll("#bars b").forEach((b, i) => b.style.transform = `scaleX(${i < idx ? 1 : i === idx ? p : 0})`);
+    if (p >= 1) go(idx + 1);
+    requestAnimationFrame(tick);
+  }
+  function start() {
+    $("#slides").innerHTML = featured.map((p, i) => `<img src="${p.images[0]}" alt="" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}>`).join("");
+    $("#bars").innerHTML = featured.map((p, i) => `<button aria-label="${i + 1}"><b></b></button>`).join("");
+    $("#bars").querySelectorAll("button").forEach((b, i) => b.onclick = () => go(i));
+    const first = $("#slides img");
+    const begin = () => { go(0, true); requestAnimationFrame(tick); };
+    first.complete ? begin() : first.addEventListener("load", begin, { once: true });
+  }
+  return { start, caption, current: () => featured[idx] };
+})();
+$("#nowOpen").onclick = e => { e.preventDefault(); openViewer(hero.current(), e.currentTarget); };
+
+/* ---------------- Projects ---------------- */
+let filter = "all", showAll = false;
+const FIRST = 9;
+function renderFilters() {
+  const cats = ["all", "led", "av", "sec", "power"];
+  $("#filters").innerHTML = cats.map(c => {
+    const n = c === "all" ? P.length : P.filter(p => p.cat === c).length;
+    return `<button data-c="${c}" aria-pressed="${c === filter}">${c === "all" ? T[lang].all : T[lang].cat[c]}<sup>${n}</sup></button>`;
+  }).join("");
+  $("#filters").querySelectorAll("button").forEach(b => b.onclick = () => setFilter(b.dataset.c));
+}
+function setFilter(c) { filter = c; renderFilters(); renderGrid(); }
+function renderGrid() {
+  const list = P.filter(p => filter === "all" || p.cat === filter);
+  const shown = filter === "all" && !showAll ? list.slice(0, FIRST) : list;
+  $("#grid").innerHTML = shown.map((p, i) => `<article class="tile reveal" tabindex="0" data-s="${p.slug}" style="transition-delay:${(i % 3) * 90}ms">
+    <div class="ph"><img src="${p.images[0]}" alt="" loading="lazy"></div>
+    <h3>${title(p)}</h3><p><span>${T[lang].cat[p.cat]}</span><span>${T[lang].photos(p.images.length)}</span></p></article>`).join("");
+  $("#idxCount").textContent = T[lang].count(list.length);
+  $("#more").hidden = shown.length === list.length;
+  $("#more").textContent = T[lang].show_all(list.length);
+  document.querySelectorAll(".tile").forEach(t => {
+    const p = P.find(x => x.slug === t.dataset.s);
+    t.onclick = () => openViewer(p, t);
+    t.onkeydown = e => { if (e.key === "Enter") openViewer(p, t); };
+  });
+  observeReveals();
+  window.ScrollTrigger && ScrollTrigger.refresh();
+}
+$("#more").onclick = () => { showAll = true; renderGrid(); };
+function renderServices() {
+  $("#svcList").innerHTML = T[lang].svc.map(([c, h, d]) => `<li class="reveal"><h3>${h}</h3><p>${d}</p>
+    <button data-c="${c}">${T[lang].see_work(P.filter(p => p.cat === c).length)}</button></li>`).join("");
+  $("#svcList").querySelectorAll("button").forEach(b => b.onclick = () => {
+    setFilter(b.dataset.c);
+    scrollToEl(document.querySelector(".work"));
+  });
+  observeReveals();
+}
+
+/* reveal-on-scroll, shared by everything marked .reveal */
+const revealIO = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); revealIO.unobserve(e.target); }
+}), { rootMargin: "0px 0px -8% 0px" }) : null;
+function observeReveals() {
+  document.querySelectorAll(".reveal:not(.in)").forEach(el => revealIO ? revealIO.observe(el) : el.classList.add("in"));
+}
+document.querySelectorAll(".sec-top, .strip div, .about figure, .about .big, .svc-side, .screen, form.cf").forEach(el => el.classList.add("reveal"));
+
+/* ---------------- Viewer ---------------- */
+const viewer = $("#viewer");
+let vp = null, vi = 0, lastFocus = null;
+function openViewer(p, fromEl) {
+  vp = p; vi = 0; lastFocus = fromEl;
+  $("#vTitle").textContent = title(p);
+  $("#vCat").textContent = T[lang].cat[p.cat];
+  $("#vText").textContent = p.text;
+  $("#vThumbs").innerHTML = p.images.map((s, i) => `<button data-n="${i}" aria-label="${i + 1}"><img src="${s}" alt="" loading="lazy"></button>`).join("");
+  $("#vThumbs").querySelectorAll("button").forEach(b => b.onclick = () => show(+b.dataset.n));
+  show(0);
+  viewer.classList.add("open"); document.body.style.overflow = "hidden"; lenis && lenis.stop();
+  if (!reduce && fromEl) {
+    const r = fromEl.getBoundingClientRect();
+    const ins = `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px)`;
+    gsap.fromTo(viewer, { clipPath: ins }, { clipPath: "inset(0px 0px 0px 0px)", duration: .7, ease: "expo.inOut" });
+    gsap.fromTo(".v-top, .v-text, .v-thumbs", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .5, delay: .45, stagger: .06 });
+  }
+  $("#vClose").focus();
+}
+function show(n) {
+  vi = (n + vp.images.length) % vp.images.length;
+  const img = $("#vImg");
+  img.src = vp.images[vi];
+  if (!reduce) gsap.fromTo(img, { opacity: 0, scale: 1.02 }, { opacity: 1, scale: 1, duration: .45, ease: "power2.out" });
+  $("#vCounter").textContent = `${vi + 1} / ${vp.images.length}`;
+  $("#vThumbs").querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-current", i === vi));
+  $("#vThumbs").children[vi]?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+}
+function closeViewer() {
+  const done = () => { viewer.classList.remove("open"); viewer.style.clipPath = ""; document.body.style.overflow = ""; lenis && lenis.start(); lastFocus && lastFocus.focus({ preventScroll: true }); };
+  if (reduce) return done();
+  gsap.to(viewer, { opacity: 0, duration: .3, onComplete: () => { viewer.style.opacity = ""; done(); } });
+}
+$("#vClose").onclick = closeViewer;
+$("#vPrev").onclick = () => show(vi - 1);
+$("#vNext").onclick = () => show(vi + 1);
+addEventListener("keydown", e => {
+  if (!viewer.classList.contains("open")) return;
+  if (e.key === "Escape") closeViewer();
+  if (e.key === "ArrowRight") show(vi + 1);
+  if (e.key === "ArrowLeft") show(vi - 1);
+});
+
+/* ---------------- Scroll & motion ---------------- */
+gsap.registerPlugin(ScrollTrigger);
+let lenis = null;
+if (!reduce && window.Lenis) {
+  lenis = new Lenis({ lerp: 0.1 });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+function scrollToEl(el) { lenis ? lenis.scrollTo(el, { offset: -90 }) : el.scrollIntoView({ behavior: "smooth" }); }
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+  const id = a.getAttribute("href"); if (id.length < 2) return;
+  const el = document.querySelector(id); if (!el) return;
+  e.preventDefault(); $("#nav").classList.remove("open"); $("#menuBtn").setAttribute("aria-expanded", "false"); scrollToEl(el);
+}));
+$("#menuBtn").onclick = () => { const o = $("#nav").classList.toggle("open"); $("#menuBtn").setAttribute("aria-expanded", o); };
+
+/* header switches ink colour over light sections */
+const hdr = $("#hdr");
+document.querySelectorAll("[data-theme]").forEach(s => ScrollTrigger.create({
+  trigger: s, start: "top 40px", end: "bottom 40px",
+  onToggle: st => st.isActive && hdr.classList.toggle("light", s.dataset.theme === "light"),
+}));
+
+/* key numbers count up the first time they are seen */
+document.querySelectorAll("[data-count]").forEach(el => {
+  if (reduce) return;
+  const end = +el.dataset.count, o = { v: 0 };
+  ScrollTrigger.create({ trigger: el, start: "top 90%", once: true, onEnter: () =>
+    gsap.to(o, { v: end, duration: 1.8, ease: "power2.out", onUpdate: () => el.textContent = Math.round(o.v) + "+" }) });
+});
+
+/* header: solid once past the hero, tucks away on scroll down, returns on scroll up */
+let lastY = 0;
+addEventListener("scroll", () => {
+  const y = scrollY;
+  hdr.classList.toggle("solid", y > innerHeight * 0.6 && !hdr.classList.contains("light"));
+  hdr.classList.toggle("hide", y > innerHeight && y > lastY + 4 && !$("#nav").classList.contains("open"));
+  if (y < lastY - 4) hdr.classList.remove("hide");
+  lastY = y;
+}, { passive: true });
+
+/* the one orchestrated entrance: panel powers on, then the headline rises */
+function intro() {
+  if (reduce) return;
+  gsap.from(".hero h1 .ln span", { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: .12, delay: .3 });
+  gsap.from(".hero .sub, .hero .btns, .now", { opacity: 0, y: 12, duration: .8, delay: .8, stagger: .1 });
+}
+
+/* FAV screen loops its sample ads */
+(function favLoop() {
+  const slides = document.querySelectorAll("#screen .slide"); let n = 0;
+  if (reduce) return;
+  const step = () => {
+    slides.forEach((s, i) => s.classList.toggle("on", i === n));
+    gsap.fromTo("#tick", { width: "0%" }, { width: "100%", duration: 3, ease: "none", onComplete: () => { n = (n + 1) % slides.length; step(); } });
+  };
+  step();
+})();
+
+applyLang();
+hero.start();
+intro();
+addEventListener("load", () => ScrollTrigger.refresh());
+</script>
+</body>
+</html>

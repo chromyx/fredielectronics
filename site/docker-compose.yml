@@ -1,0 +1,13 @@
+services:
+  site:
+    build: .
+    container_name: fredi-site
+    restart: unless-stopped   # comes back on its own after a reboot (Docker Desktop must start with Windows)
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATABASE_URL: file:/app/data/fredi.db
+    volumes:
+      - ./data:/app/data      # the database (projects, texts, messages, login)
+      - ./media:/app/media    # uploaded photos

@@ -1,0 +1,25 @@
+# secrets: never in git (this repository is public)
+.env
+.env.*
+!.env.example
+ADMIN-LOGIN.txt
+*.pem
+
+# the live database holds the admin login; a cleaned copy is in site/content-db/
+site/data/
+
+# installs and build output
+node_modules/
+.next/
+*.tsbuildinfo
+next-env.d.ts
+__pycache__/
+*.pyc
+
+# GitHub refuses files over 100 MB
+backup/images/2025/04/Auditori-Politeknik.mp4
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
