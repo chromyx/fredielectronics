@@ -167,7 +167,12 @@ export function Site({ data }: { data: HomeData }) {
   /* ---------- FAV sample screen ---------- */
   const [ad, setAd] = useState(0)
   useEffect(() => {
-    if (reduce) return
+    // Reduced motion (e.g. Windows "Animation effects" off): still rotate the slides with a plain
+    // crossfade every 4s, just without the moving progress bar.
+    if (reduce) {
+      const t = setTimeout(() => setAd((a) => (a + 1) % 3), 4000)
+      return () => clearTimeout(t)
+    }
     const tw = gsap.fromTo('#tick', { width: '0%' }, { width: '100%', duration: 3, ease: 'none', onComplete: () => setAd((a) => (a + 1) % 3) })
     return () => { tw.kill() }
   }, [ad, reduce])
