@@ -92,7 +92,7 @@ async function loadSettings(locale: Locale): Promise<Settings> {
     email2: (s as { email2?: string | null }).email2 || '',
     instagram: (s.instagram || '').replace(/^@/, ''),
     facebook: (s as { facebook?: string }).facebook || 'https://www.facebook.com/fredielectronics/',
-    linkedin: (s as { linkedin?: string }).linkedin || 'https://www.linkedin.com/company/fredielectronics/',
+    linkedin: (s as { linkedin?: string }).linkedin || 'https://www.linkedin.com/in/fredielectronics/',
     address: s.address || '',
     hours: s.hours || '',
     founded: s.founded || 1991,

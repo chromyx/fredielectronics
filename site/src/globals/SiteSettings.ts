@@ -23,7 +23,7 @@ export const SiteSettings: GlobalConfig = {
         { name: 'email2', type: 'email', label: 'Second email (optional)', defaultValue: 'info@fredielectronics.com', admin: { width: '50%' } },
         { name: 'instagram', type: 'text', label: 'Instagram username', defaultValue: 'fredielectronics', admin: { width: '50%' } },
         { name: 'facebook', type: 'text', label: 'Facebook page link', defaultValue: 'https://www.facebook.com/fredielectronics/', admin: { width: '50%' } },
-        { name: 'linkedin', type: 'text', label: 'LinkedIn page link', defaultValue: 'https://www.linkedin.com/company/fredielectronics/', admin: { width: '50%' } },
+        { name: 'linkedin', type: 'text', label: 'LinkedIn page link', defaultValue: 'https://www.linkedin.com/in/fredielectronics/', admin: { width: '50%' } },
       ],
     },
     { name: 'address', type: 'text', defaultValue: 'Rr. Kavajës, P.207, Sh.2, Tiranë 1001' },

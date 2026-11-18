@@ -43,7 +43,7 @@ On the original PC the live database is `site/data/fredi.db` and the admin login
 - FAV × TEG section (fav.al, LED ad network in TEG mall) uses the FAV palette: blue `#042c8c`, deep `#00165b`, magenta `#e50095`.
 - Fredi does not sell laptops. Ecler is its own section on the Audio page.
 - Hours: Mon–Fri 08:00–17:00, Sat 08:00–14:00, Sun closed. Contact: +355 69 675 2032 (also WhatsApp), fredielectronics@gmail.com, Rr. Kavajës P.207, Tiranë.
-- Socials: Instagram @fredielectronics, facebook.com/fredielectronics, linkedin.com/company/fredielectronics. The LinkedIn address was assumed from the handle and has not been checked.
+- Socials: Instagram @fredielectronics, facebook.com/fredielectronics, linkedin.com/in/fredielectronics (chosen by the client 2026-11-18; a company page also exists at linkedin.com/company/fredi-electronics-shpk). Contact emails: fredielectronics@gmail.com and info@fredielectronics.com.
 - Service page hero = "LED wall": the photo is split into cabinets and changes project in a diagonal wave.
 - Homepage slideshow: Bashkia Korçë, Durrës, Shkolla e Magjistraturës, Zoe Hora, Plaza and others; set via `src/seed/hero-slides.ts`. Leave the Magjistratura room as it is.
 - The Tirana Fair 2025 stand and Match Maker 2026 stand are the same stand, merged into one project.
