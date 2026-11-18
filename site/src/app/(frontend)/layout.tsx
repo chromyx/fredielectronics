@@ -1,8 +1,10 @@
 import React from 'react'
 import './styles.css'
 import './pages.css'
+import { SITE_URL } from '@/lib/seo'
 
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'Fredi Electronics – Integrues sistemesh që nga 1991',
   description:
     'Ekrane LED, audio-video, sisteme konference, siguri dhe energji në Shqipëri dhe Kosovë. LED displays, AV, conference, security and power since 1991.',

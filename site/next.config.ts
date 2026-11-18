@@ -8,6 +8,9 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  // Self-contained build (server.js + only the files it needs) for the Namecheap hosting.
+  // Turned on only by the GitHub deploy workflow; Docker and `npm run dev` are unchanged.
+  output: process.env.NEXT_STANDALONE === '1' ? 'standalone' : undefined,
   async redirects() {
     return oldWordPressRedirects
   },

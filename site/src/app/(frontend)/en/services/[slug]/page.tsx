@@ -2,12 +2,20 @@ import { notFound } from 'next/navigation'
 import { ServicePage } from '@/components/ServicePage'
 import { getServicePage } from '@/lib/getHomeData'
 import { servicePath } from '@/lib/routes'
+import { alternates } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const data = await getServicePage('en', (await params).slug)
-  return data ? { title: `${data.service.title} – Fredi Electronics`, description: data.service.lead } : {}
+  const { slug } = await params
+  const data = await getServicePage('en', slug)
+  return data
+    ? {
+        title: `${data.service.title} – Fredi Electronics`,
+        description: data.service.lead,
+        alternates: alternates(servicePath('sq', slug), servicePath('en', slug), 'en'),
+      }
+    : {}
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {

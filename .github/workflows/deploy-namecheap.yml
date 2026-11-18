@@ -1,0 +1,87 @@
+# Builds the site on GitHub and uploads it to the Namecheap hosting.
+# The Namecheap server can run the site but cannot build it (its glibc is too old for
+# Next.js's compiler), so the build happens here and only the finished app is uploaded.
+#
+# Runs on every push to main that touches site/, or by hand (Actions -> Deploy to Namecheap -> Run).
+# Needs these repository secrets (Settings -> Secrets and variables -> Actions):
+#   NC_HOST         server name, e.g. premiumXXX.web-hosting.com
+#   NC_PORT         SSH port (Namecheap: 21098)
+#   NC_USER         cPanel username
+#   NC_SSH_KEY      private key whose public half is authorized in cPanel -> SSH Access
+#   NC_KNOWN_HOSTS  the server's host key line(s), so the upload only goes to the real server
+#
+# On the server: the app lives in ~/fredi/app. The database (~/fredi/data) and uploaded
+# photos (~/fredi/media, linked as app/media) are never touched by a deploy.
+name: Deploy to Namecheap
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', '.github/workflows/deploy-namecheap.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-namecheap
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - name: Get the code (without photos and archives)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /site/
+            !/site/media/
+            /.github/
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Build
+        env:
+          NEXT_STANDALONE: '1'
+          NEXT_TELEMETRY_DISABLED: '1'
+          SITE_URL: https://fredielectronics.com
+          # placeholders for the build only; the real values are set on the server
+          DATABASE_URL: file:/tmp/build.db
+          PAYLOAD_SECRET: build-only
+        run: npm run build
+
+      - name: Assemble the app
+        run: |
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+          rm -f .next/standalone/.env*
+          echo "files: $(find .next/standalone -type f | wc -l), size: $(du -sh .next/standalone | cut -f1)"
+
+      - name: Upload to Namecheap
+        env:
+          NC_HOST: ${{ secrets.NC_HOST }}
+          NC_PORT: ${{ secrets.NC_PORT }}
+          NC_USER: ${{ secrets.NC_USER }}
+          NC_SSH_KEY: ${{ secrets.NC_SSH_KEY }}
+          NC_KNOWN_HOSTS: ${{ secrets.NC_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$NC_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$NC_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH="ssh -i $HOME/.ssh/deploy_key -p $NC_PORT -o StrictHostKeyChecking=yes"
+          rsync -az --delete \
+            --exclude '/media' --exclude '/data' --exclude '/tmp' --exclude '/.env' \
+            -e "$SSH" .next/standalone/ "$NC_USER@$NC_HOST:fredi/app/"
+          # Restart the running app so it picks up the new files.
+          $SSH "$NC_USER@$NC_HOST" 'mkdir -p ~/fredi/app/tmp && touch ~/fredi/app/tmp/restart.txt
+            cloudlinux-selector restart --json --interpreter nodejs --app-root fredi/app 2>/dev/null || echo "(app not created in cPanel yet, files uploaded only)"'
