@@ -733,7 +733,12 @@ export interface SiteSetting {
   email?: string | null;
   email2?: string | null;
   instagram?: string | null;
+  facebook?: string | null;
+  linkedin?: string | null;
   address?: string | null;
+  /**
+   * One line per day group, e.g. "E hënë – e premte: 08:00–17:00".
+   */
   hours?: string | null;
   founded?: number | null;
   projectsDone?: number | null;
@@ -805,6 +810,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   email?: T;
   email2?: T;
   instagram?: T;
+  facebook?: T;
+  linkedin?: T;
   address?: T;
   hours?: T;
   founded?: T;

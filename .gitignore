@@ -23,3 +23,7 @@ backup/images/2025/04/Auditori-Politeknik.mp4
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Claude Code: per-machine state
+.claude/.session-reminder.json
+.claude/settings.local.json
