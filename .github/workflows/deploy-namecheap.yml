@@ -1,17 +1,14 @@
-# Builds the site on GitHub and uploads it to the Namecheap hosting.
-# The Namecheap server can run the site but cannot build it (its glibc is too old for
-# Next.js's compiler), so the build happens here and only the finished app is uploaded.
+# Builds the site on GitHub and publishes the finished app for the Namecheap hosting.
+#
+# Why: the Namecheap server can run the site but cannot build it (its glibc is too old for
+# Next.js's compiler), and its firewall does not accept SSH from GitHub. So GitHub builds the
+# app and attaches it to the "namecheap-build" release; the server fetches it by itself
+# (site/deploy/namecheap/update.sh, run by cron every 5 minutes) and installs it.
+#
+# The published file is built from this public code with placeholder values only:
+# no database, no photos, no passwords or secrets.
 #
 # Runs on every push to main that touches site/, or by hand (Actions -> Deploy to Namecheap -> Run).
-# Needs these repository secrets (Settings -> Secrets and variables -> Actions):
-#   NC_HOST         server name, e.g. premiumXXX.web-hosting.com
-#   NC_PORT         SSH port (Namecheap: 21098)
-#   NC_USER         cPanel username
-#   NC_SSH_KEY      private key whose public half is authorized in cPanel -> SSH Access
-#   NC_KNOWN_HOSTS  the server's host key line(s), so the upload only goes to the real server
-#
-# On the server: the app lives in ~/fredi/app. The database (~/fredi/data) and uploaded
-# photos (~/fredi/media, linked as app/media) are never touched by a deploy.
 name: Deploy to Namecheap
 
 on:
@@ -20,12 +17,15 @@ on:
     paths: ['site/**', '.github/workflows/deploy-namecheap.yml']
   workflow_dispatch:
 
+permissions:
+  contents: write   # to update the namecheap-build release
+
 concurrency:
   group: deploy-namecheap
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -60,37 +60,26 @@ jobs:
           PAYLOAD_SECRET: build-only
         run: npm run build
 
-      - name: Assemble the app
+      - name: Package the app
         run: |
           cp -r .next/static .next/standalone/.next/static
           cp -r public .next/standalone/public
-          rm -f .next/standalone/.env*
-          echo "files: $(find .next/standalone -type f | wc -l), size: $(du -sh .next/standalone | cut -f1)"
+          rm -rf .next/standalone/.env* .next/standalone/media .next/standalone/data
+          tar -czf "$RUNNER_TEMP/app.tar.gz" -C .next/standalone .
+          cd "$RUNNER_TEMP"
+          sha256sum app.tar.gz > app.tar.gz.sha256
+          echo "$GITHUB_SHA" > build.txt
+          echo "package: $(du -h app.tar.gz | cut -f1), commit $GITHUB_SHA"
 
-      - name: Upload to Namecheap
+      - name: Publish to the namecheap-build release
         env:
-          NC_HOST: ${{ secrets.NC_HOST }}
-          NC_PORT: ${{ secrets.NC_PORT }}
-          NC_USER: ${{ secrets.NC_USER }}
-          NC_SSH_KEY: ${{ secrets.NC_SSH_KEY }}
-          NC_KNOWN_HOSTS: ${{ secrets.NC_KNOWN_HOSTS }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          # Secrets pasted in a browser can carry Windows line endings, which ssh rejects.
-          printf '%s\n' "$NC_SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$NC_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
-          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null && echo "key: readable"
-          echo "known hosts: $(grep -c . ~/.ssh/known_hosts) line(s)"
-          SSH="ssh -i $HOME/.ssh/deploy_key -p $NC_PORT -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=30"
-          # Connection check with a readable reason if it fails (wrong key, firewall, host key...).
-          if ! $SSH "$NC_USER@$NC_HOST" 'echo "ssh: connected as $(whoami)"'; then
-            echo "::error::SSH to the server failed. Details:"
-            $SSH -v "$NC_USER@$NC_HOST" true 2>&1 | grep -E "Connecting|Connection|Authenticat|Offering|denied|refused|timed out|Host key|REMOTE HOST|No route|reset" | head -20
-            exit 1
-          fi
-          rsync -az --delete \
-            --exclude '/media' --exclude '/data' --exclude '/tmp' --exclude '/.env' \
-            -e "$SSH" .next/standalone/ "$NC_USER@$NC_HOST:fredi/app/"
-          # Restart the running app so it picks up the new files.
-          $SSH "$NC_USER@$NC_HOST" 'mkdir -p ~/fredi/app/tmp && touch ~/fredi/app/tmp/restart.txt
-            cloudlinux-selector restart --json --interpreter nodejs --app-root fredi/app 2>/dev/null || echo "(app not created in cPanel yet, files uploaded only)"'
+          cd "$RUNNER_TEMP"
+          gh release view namecheap-build -R "$GITHUB_REPOSITORY" > /dev/null 2>&1 || \
+            gh release create namecheap-build -R "$GITHUB_REPOSITORY" --prerelease \
+              --title "Namecheap build (automatic)" \
+              --notes "Built by the Deploy to Namecheap workflow. The server installs the newest build by itself. Do not edit."
+          # build.txt last: the server only acts when it changes, so the app file is always ready first.
+          gh release upload namecheap-build -R "$GITHUB_REPOSITORY" --clobber app.tar.gz app.tar.gz.sha256
+          gh release upload namecheap-build -R "$GITHUB_REPOSITORY" --clobber build.txt
