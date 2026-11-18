@@ -76,9 +76,18 @@ jobs:
           NC_KNOWN_HOSTS: ${{ secrets.NC_KNOWN_HOSTS }}
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$NC_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$NC_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          SSH="ssh -i $HOME/.ssh/deploy_key -p $NC_PORT -o StrictHostKeyChecking=yes"
+          # Secrets pasted in a browser can carry Windows line endings, which ssh rejects.
+          printf '%s\n' "$NC_SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$NC_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null && echo "key: readable"
+          echo "known hosts: $(grep -c . ~/.ssh/known_hosts) line(s)"
+          SSH="ssh -i $HOME/.ssh/deploy_key -p $NC_PORT -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=30"
+          # Connection check with a readable reason if it fails (wrong key, firewall, host key...).
+          if ! $SSH "$NC_USER@$NC_HOST" 'echo "ssh: connected as $(whoami)"'; then
+            echo "::error::SSH to the server failed. Details:"
+            $SSH -v "$NC_USER@$NC_HOST" true 2>&1 | grep -E "Connecting|Connection|Authenticat|Offering|denied|refused|timed out|Host key|REMOTE HOST|No route|reset" | head -20
+            exit 1
+          fi
           rsync -az --delete \
             --exclude '/media' --exclude '/data' --exclude '/tmp' --exclude '/.env' \
             -e "$SSH" .next/standalone/ "$NC_USER@$NC_HOST:fredi/app/"
