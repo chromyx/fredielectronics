@@ -20,6 +20,7 @@ export const SiteSettings: GlobalConfig = {
       type: 'row',
       fields: [
         { name: 'email', type: 'email', defaultValue: 'fredielectronics@gmail.com', admin: { width: '50%' } },
+        { name: 'email2', type: 'email', label: 'Second email (optional)', defaultValue: 'info@fredielectronics.com', admin: { width: '50%' } },
         { name: 'instagram', type: 'text', label: 'Instagram username', defaultValue: 'fredielectronics', admin: { width: '50%' } },
         { name: 'facebook', type: 'text', label: 'Facebook page link', defaultValue: 'https://www.facebook.com/fredielectronics/', admin: { width: '50%' } },
         { name: 'linkedin', type: 'text', label: 'LinkedIn page link', defaultValue: 'https://www.linkedin.com/company/fredielectronics/', admin: { width: '50%' } },

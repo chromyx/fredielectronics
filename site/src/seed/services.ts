@@ -97,8 +97,8 @@ const S: Svc[] = [
     title: ['Ekrane LED & video', 'LED displays & video'],
     lead: ['Ekrane LED të montuara nga ne, për brenda dhe jashtë.', 'LED displays assembled in-house, for indoor and outdoor use.'],
     intro: [
-      'Me mbi 10 vjet përvojë në ekranet LED, Fredi Electronics ndërton zgjidhje të përshtatura për çdo hapësirë: fasada, dyqane, salla, evente dhe hapësira publike. Modulet dhe kabinetet zgjidhen sipas funksionit, distancës së shikimit dhe efektit që kërkoni.\n\nEkranet montohen në punishten tonë, instalohen nga ekipi ynë dhe mirëmbahen në vend. Si partner inxhinierik i MUXWAVE në Shqipëri, sjellim edhe ekranet LED transparente holografike.',
-      'With more than 10 years in LED, Fredi Electronics builds displays sized for each space: façades, shops, halls, events and public spaces. Modules and cabinets are chosen for the purpose, the viewing distance and the effect you want.\n\nDisplays are assembled in our workshop, installed by our team and maintained on site. As MUXWAVE’s engineering partner in Albania, we also bring holographic transparent LED.',
+      'Me përvojë në ekranet LED që nga viti 2010, Fredi Electronics ndërton zgjidhje të përshtatura për çdo hapësirë: fasada, dyqane, salla, evente dhe hapësira publike. Modulet dhe kabinetet zgjidhen sipas funksionit, distancës së shikimit dhe efektit që kërkoni.\n\nEkranet montohen në punishten tonë, instalohen nga ekipi ynë dhe mirëmbahen në vend. Si partner inxhinierik i MUXWAVE në Shqipëri, sjellim edhe ekranet LED transparente holografike.',
+      'With experience in LED since 2010, Fredi Electronics builds displays sized for each space: façades, shops, halls, events and public spaces. Modules and cabinets are chosen for the purpose, the viewing distance and the effect you want.\n\nDisplays are assembled in our workshop, installed by our team and maintained on site. As MUXWAVE’s engineering partner in Albania, we also bring holographic transparent LED.',
     ],
     highlights: [
       ['Të montuara nga ne', 'Panele sipas përmasave të projektit', 'Assembled by us', 'Panels built to the project’s size'],

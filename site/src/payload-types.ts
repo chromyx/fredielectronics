@@ -731,6 +731,7 @@ export interface SiteSetting {
    */
   whatsapp?: string | null;
   email?: string | null;
+  email2?: string | null;
   instagram?: string | null;
   address?: string | null;
   hours?: string | null;
@@ -802,6 +803,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   phone?: T;
   whatsapp?: T;
   email?: T;
+  email2?: T;
   instagram?: T;
   address?: T;
   hours?: T;

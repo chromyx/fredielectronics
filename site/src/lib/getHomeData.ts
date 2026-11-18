@@ -21,7 +21,7 @@ export type ProjectCard = {
 }
 export type ServiceLink = { slug: string; title: string; lead: string; category?: Category; photo: Img | null }
 export type Settings = {
-  phone: string; whatsapp: string; email: string; instagram: string; facebook: string; linkedin: string; address: string; hours: string
+  phone: string; whatsapp: string; email: string; email2: string; instagram: string; facebook: string; linkedin: string; address: string; hours: string
   founded: number; projectsDone: number; brands: number
 }
 /** What every page needs for the header, menus and footer. */
@@ -89,6 +89,7 @@ async function loadSettings(locale: Locale): Promise<Settings> {
     phone: s.phone || '',
     whatsapp: (s.whatsapp || '').replace(/\D/g, ''),
     email: s.email || '',
+    email2: (s as { email2?: string | null }).email2 || '',
     instagram: (s.instagram || '').replace(/^@/, ''),
     facebook: (s as { facebook?: string }).facebook || 'https://www.facebook.com/fredielectronics/',
     linkedin: (s as { linkedin?: string }).linkedin || 'https://www.linkedin.com/company/fredielectronics/',

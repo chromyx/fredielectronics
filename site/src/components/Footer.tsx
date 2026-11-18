@@ -18,7 +18,7 @@ export function Footer({ shell, favLink = 'https://fav.al/', onJump }: { shell: 
         <div className="foot-in pad">
           <div>
             <img src="/brand/logo-black.png" alt="Fredi Electronics" />
-            <p>Fredi Electronics sh.p.k.<br />{settings.address}<br /><a href={`tel:+${settings.whatsapp}`}>{settings.phone}</a><br /><a href={`mailto:${settings.email}`}>{settings.email}</a></p>
+            <p>Fredi Electronics sh.p.k.<br />{settings.address}<br /><a href={`tel:+${settings.whatsapp}`}>{settings.phone}</a><br /><a href={`mailto:${settings.email}`}>{settings.email}</a>{settings.email2 && <><br /><a href={`mailto:${settings.email2}`}>{settings.email2}</a></>}</p>
           </div>
           <div><h4>{t.f_nav}</h4><ul>{nav.map(([id, label]) => <li key={id}><a {...link(id)}>{label}</a></li>)}</ul></div>
           <div><h4>{t.nav_services}</h4><ul>{services.map((s) => <li key={s.slug}><a href={servicePath(locale, s.slug)}>{s.title}</a></li>)}</ul></div>

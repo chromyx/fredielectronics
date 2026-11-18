@@ -344,7 +344,7 @@ export function Site({ data }: { data: HomeData }) {
             <ul className="c-list">
               <li><span className="ic"><Icon id="i-pin" /></span><div><small>{t.c_addr}</small>{settings.address}</div></li>
               <li><span className="ic"><Icon id="i-phone" /></span><div><small>{t.c_phone}</small><a href={`tel:+${settings.whatsapp}`}>{settings.phone}</a></div></li>
-              <li><span className="ic"><Icon id="i-mail" /></span><div><small>Email</small><a href={`mailto:${settings.email}`}>{settings.email}</a></div></li>
+              <li><span className="ic"><Icon id="i-mail" /></span><div><small>Email</small><a href={`mailto:${settings.email}`}>{settings.email}</a>{settings.email2 && <><br /><a href={`mailto:${settings.email2}`}>{settings.email2}</a></>}</div></li>
               <li><span className="ic"><Icon id="i-clock" /></span><div><small>{t.c_hours}</small><span className="hours">{hours}</span></div></li>
             </ul>
             <div className="c-actions">
