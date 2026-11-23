@@ -72,13 +72,26 @@ If a clone was made without it: `git config core.longpaths true`, then `git rest
 - `design-preview/`, `tools/` – early static mockups and helper scripts
 - `.github/workflows/` – Namecheap deploy; `.claude/` – shared Claude Code settings, hook, launch config
 
+## Live hosting, domain and email (since 2026-11-18)
+
+- **Live site:** https://fredielectronics.com (admin: https://fredielectronics.com/admin). Test copy: https://fredi.fav.al (same app, same database).
+- **Hosting:** Namecheap shared hosting "Stellar Plus", **inside fav.al's cPanel account** (user `favaqldw`, server `premium705.web-hosting.com`, IP `198.177.120.60`, SSH port 21098). CloudLinux + LiteSpeed; the app is a cPanel "Setup Node.js App" (Node 24, Passenger, startup `server.js`). No root, no firewall of our own.
+- **Server folders:** `~/fredi/app` (running app, replaced by each deploy), `~/fredi/data/fredi.db` (live database, never touched by deploys), `~/fredi/media` (photos, linked as `app/media`), `~/fredi/releases` (last 3 builds), `~/fredi/update.sh` + `update.log` (cron every 5 min). Domain doc roots: `~/fredielectronics_public` and `~/fredi_public` (only `.htaccess` with the Passenger block + https/www redirect, and `wp-content/uploads/2026/05/` = old email-signature images and catalogue PDFs, restored so old links keep working).
+- **Server can't build Next** (glibc 2.28 < 2.29), so GitHub builds and the server pulls (see Deploy).
+- **HTTPS:** Let's Encrypt via `~/.acme.sh` (auto-renew cron, deploys to cPanel with `cpanel_uapi`), for fredielectronics.com + www and fredi.fav.al.
+- **Domain:** registered at **GoDaddy**; DNS is GoDaddy's own (nameservers ns13/ns14.domaincontrol.com). A @ → 198.177.120.60, www → @.
+- **Email (switched to cPanel 2026-11-23):** mailboxes info, a.kasmi, e.kasmi, fredi, partners, projects, support @fredielectronics.com live in fav.al's cPanel → Email Accounts. MX → mx1/mx2/mx3-hosting.jellyfish.systems; SPF allows Namecheap **and** Hostinger during the changeover; DKIM `default._domainkey` (Namecheap). The old Hostinger mailboxes (Miri's account) still exist until the old mail is copied; Hostinger's `hostingermail-*` DKIM records and `ftp` stay in GoDaddy until Miri deletes Hostinger. Mail apps: IMAP/SMTP `premium705.web-hosting.com` 993/465 SSL; webmail https://premium705.web-hosting.com:2096.
+- **Old WordPress:** still on Miri's Hostinger, not reachable via the domain; UpdraftPlus backup was made 2026-11-18.
+
 ## Current state
 
 **Works**
-- Full bilingual site and admin run from a fresh clone (verified 2026-11-18 on Windows, Node 26): home, English pages, service and project pages, `/admin` all return 200.
+- Live on fredielectronics.com with HTTPS; old WordPress URLs redirect; sitemap.xml, robots.txt, canonical/hreflang.
+- Full bilingual site and admin run from a fresh clone (verified 2026-11-18 on Windows, Node 26).
 - `npx tsc --noEmit` passes.
-- Namecheap deploy pipeline (GitHub Actions build → release → server cron).
-- Content: 75 projects, 6 service pages, brands, clients, homepage slideshow, socials (Instagram, Facebook, LinkedIn).
+- Namecheap deploy pipeline (GitHub Actions build → `namecheap-build` release → server cron).
+- Content: 75 projects, 6 service pages, brands, clients, homepage slideshow, socials, two contact emails.
+- Hosting health 2026-11-21: memory ~0.5/2 GB, 2 app processes (main domain + fredi.fav.al), disk 3.1 GB. From outside only Namecheap's shared ports answer; 3000/DB/panel ports closed.
 
 **Broken or missing**
 - `npx eslint .` crashes ("Converting circular structure to JSON"): `eslint.config.mjs` loads `next/core-web-vitals` through `FlatCompat`, but `eslint-config-next` 16 is already a flat config.
@@ -87,9 +100,17 @@ If a clone was made without it: `git config core.longpaths true`, then `git rest
 - `npm audit` reports 31 vulnerabilities (1 critical, 19 high) in dependencies; not reviewed yet.
 - npm 11 skips `esbuild`'s install scripts unless approved; everything still works.
 - No email adapter: Payload logs emails to the console (password reset etc. won't send).
+- No daily backup of `~/fredi/data` + `~/fredi/media` on the server yet; Namecheap AutoBackup status not checked.
+- No security headers yet (HSTS, CSP, X-Frame-Options…); `/api` access rules not audited.
+- `~/fredi/repo` (1.2 GB, first-setup clone) is unused and can be deleted.
+- Unused: GitHub secrets `NC_*` and the `github-actions-deploy-fredi` key in the server's `authorized_keys` (old SSH upload, replaced by the pull model).
 - Products / shop section not built yet (planned, same admin).
 
 ## Working rules and conventions
+
+**Talking to Bergi**
+- When he says "explain", explain like he's 5: numbered steps with the exact link to open, then "click here, then click there". No jargon without a plain explanation.
+- Never type or set passwords for him; he (or Eva) types them. Ask before DNS changes, purchases or anything public.
 
 **Code**
 - Browser components import `CATS` from `src/lib/cats.ts`, never values from `getHomeData.ts`, which would pull Payload into the client bundle.
@@ -118,3 +139,4 @@ If a clone was made without it: `git config core.longpaths true`, then `git rest
 ## Session log
 
 - **2026-11-18** – Fresh clone on Windows (long paths on, `npm ci`, new `.env`, database copied, dev server checked). Rewrote this file as the shared context for all devices, added `ROADMAP.md`, the session-reminder hook (`.claude/settings.json`), and regenerated `src/payload-types.ts` (Facebook/LinkedIn fields were missing). Found: ESLint config broken, launch.json paths tied to the original PC.
+- **2026-11-18 → 11-23 (second PC)** – Went live: hosted on Namecheap (fav.al cPanel, Node.js App), GitHub builds + server pulls via cron, Let's Encrypt via acme.sh; DNS moved from Miri's Hostinger to GoDaddy (all email records copied, GoDaddy's extra DMARC removed); fredielectronics.com now serves the new site. Added sitemap/robots/canonical, second email (`email2` column added to live DB by hand), LinkedIn → /in/fredielectronics, LED intro "since 2010", FAV slide text, FAV slides rotate with reduced motion. Restored old signature images + catalogue PDFs under `wp-content/uploads/2026/05/`. 2026-11-23: created 7 mailboxes in cPanel and switched email delivery to Namecheap (MX/SPF/DKIM in GoDaddy, cPanel routing Local); old mail still to copy from Hostinger with Thunderbird.
